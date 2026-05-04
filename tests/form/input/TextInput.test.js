@@ -56,7 +56,7 @@ describe('TextInput', () => {
         const fs = fieldset('<input name="x" value="" data-limit="10" data-guide="1" />');
         const t = new TextInput(fs, State.NORMAL);
         const inp = fs.querySelector('input');
-        fireKeyup(inp, '123456789');
+        fireKeyup(inp, '1234567890');
         expect(t._guide.className).toBe('warning');
     });
 });
