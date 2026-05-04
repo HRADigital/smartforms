@@ -1,6 +1,6 @@
-export function html(strings) {
+export function html(strings, ...values) {
     const div = document.createElement('div');
-    div.innerHTML = strings.raw[0].trim();
+    div.innerHTML = String.raw({ raw: strings }, ...values).trim();
     document.body.appendChild(div);
     return div;
 }
