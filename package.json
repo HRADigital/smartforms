@@ -1,0 +1,70 @@
+{
+  "name": "@hradigital/smartforms",
+  "version": "0.1.0",
+  "description": "State-aware client-side form manager for static HTML forms. Tracks per-field state (new, unchanged, changed, invalid, empty) and toggles toolbar actions accordingly.",
+  "keywords": [
+    "form",
+    "validation",
+    "form-state",
+    "html-form",
+    "toolbar",
+    "client-side",
+    "no-framework"
+  ],
+  "license": "GPL-2.0-or-later",
+  "author": "HraDigital",
+  "homepage": "https://github.com/HraDigital/smartforms#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HraDigital/smartforms.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HraDigital/smartforms/issues"
+  },
+  "type": "module",
+  "main": "./dist/smartforms.cjs.js",
+  "module": "./dist/smartforms.esm.js",
+  "browser": "./dist/smartforms.umd.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/smartforms.esm.js",
+      "require": "./dist/smartforms.cjs.js",
+      "default": "./dist/smartforms.esm.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"{src,tests,types,examples}/**/*.{js,ts}\"",
+    "format:check": "prettier --check \"{src,tests,types,examples}/**/*.{js,ts}\"",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run lint && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@vitest/coverage-v8": "^1.6.0",
+    "eslint": "^9.0.0",
+    "happy-dom": "^14.0.0",
+    "prettier": "^3.2.0",
+    "rollup": "^4.13.0",
+    "vitest": "^1.6.0"
+  }
+}
