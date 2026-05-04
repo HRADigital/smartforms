@@ -48,8 +48,8 @@ jobs:
       - run: npm run build
       - name: Verify dist outputs
         run: |
-          test -f dist/smartforms.esm.js
-          test -f dist/smartforms.cjs.js
+          test -f dist/smartforms.mjs
+          test -f dist/smartforms.cjs
           test -f dist/smartforms.umd.js
       - uses: actions/upload-artifact@v7
         with:
