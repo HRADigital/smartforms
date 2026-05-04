@@ -5,13 +5,27 @@ import { html, clearDom } from './_helpers/dom.js';
 describe('public API surface', () => {
     it('exports every documented class and constant', () => {
         const expected = [
-            'SmartForm', 'SmartFormList', 'SmartFormRecord',
-            'BaseInput', 'TextInput', 'NumberInput', 'UrlInput', 'ColorInput',
-            'DateTimeInput', 'FileInput', 'TextAreaInput', 'CheckBoxInput',
-            'RadioInput', 'SelectInput', 'DynamicTableInput',
+            'SmartForm',
+            'SmartFormList',
+            'SmartFormRecord',
+            'BaseInput',
+            'TextInput',
+            'NumberInput',
+            'UrlInput',
+            'ColorInput',
+            'DateTimeInput',
+            'FileInput',
+            'TextAreaInput',
+            'CheckBoxInput',
+            'RadioInput',
+            'SelectInput',
+            'DynamicTableInput',
             'Row',
-            'Toolbar', 'Button', 'AdminForm',
-            'State', 'Roles',
+            'Toolbar',
+            'Button',
+            'AdminForm',
+            'State',
+            'Roles',
             'autoInit',
         ];
         for (const key of expected) {

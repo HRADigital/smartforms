@@ -3,8 +3,14 @@ import Roles from '../../src/constants/Roles.js';
 
 describe('Roles enum', () => {
     const expected = [
-        'CREATE', 'UPDATE', 'UPDATEALL', 'DELETE',
-        'DELETEALL', 'CANCEL', 'LINK', 'REORDER',
+        'CREATE',
+        'UPDATE',
+        'UPDATEALL',
+        'DELETE',
+        'DELETEALL',
+        'CANCEL',
+        'LINK',
+        'REORDER',
     ];
 
     it.each(expected)('exposes %s', (key) => {
@@ -18,6 +24,8 @@ describe('Roles enum', () => {
 
     it('is frozen', () => {
         expect(Object.isFrozen(Roles)).toBe(true);
-        expect(() => { Roles.CREATE = 'mutated'; }).toThrow();
+        expect(() => {
+            Roles.CREATE = 'mutated';
+        }).toThrow();
     });
 });

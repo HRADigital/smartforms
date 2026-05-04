@@ -1,33 +1,31 @@
-import State     from '../../constants/State';
+import State from '../../constants/State';
 import BaseInput from './BaseInput';
 
 /**
  * Form File Input handling class.
- * 
+ *
  * @package   SmartForms\Assets
  */
 class FileInput extends BaseInput {
-
     /**
      * Initializes the FileInput instance.
-     * 
-     * @param {object} fieldset 
-     * @param {State}  state 
+     *
+     * @param {object} fieldset
+     * @param {State}  state
      */
     constructor(fieldset, state) {
-
         // Calls parent class
         super(fieldset, state);
 
         // Sets the initial state.
-        this._input   = fieldset.querySelector('input');
-        this._name    = this._input.getAttribute('name');
-        this._value   = this._input.getAttribute('value');
+        this._input = fieldset.querySelector('input');
+        this._name = this._input.getAttribute('name');
+        this._value = this._input.getAttribute('value');
         this._initial = this._value;
 
         // Sets up the control events.
-        this._input.addEventListener("change", e => this.onChange(e));
-        this._input.addEventListener("keyup", e => this.onKey(e));
+        this._input.addEventListener('change', (e) => this.onChange(e));
+        this._input.addEventListener('keyup', (e) => this.onKey(e));
 
         // Process the initial state.
         this.processChange(this._value);
@@ -35,8 +33,8 @@ class FileInput extends BaseInput {
 
     /**
      * Event handler for when the TextInput changes value (onBlur).
-     * 
-     * @param {event} e 
+     *
+     * @param {event} e
      */
     onChange(e) {
         this.processChange(e.target.value);
@@ -44,8 +42,8 @@ class FileInput extends BaseInput {
 
     /**
      * Event handler for when the TextInput changes value, while editing it.
-     * 
-     * @param {event} e 
+     *
+     * @param {event} e
      */
     onKey(e) {
         this.processChange(e.target.value);
@@ -53,20 +51,20 @@ class FileInput extends BaseInput {
 
     /**
      * Validates if the input has changed its value since start.
-     * 
+     *
      * @return {boolean}
      */
     hasChanged() {
-        return (this._value !== null);
+        return this._value !== null;
     }
 
     /**
      * Validates if the input is currently holding an illegal value.
-     * 
+     *
      * @return {boolean}
      */
     isIllegal() {
-        return (! this._input.checkValidity());
+        return !this._input.checkValidity();
     }
 }
 

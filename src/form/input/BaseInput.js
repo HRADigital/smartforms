@@ -2,37 +2,35 @@ import State from '../../constants/State';
 
 /**
  * Form Base Input handling class.
- * 
+ *
  * @package   SmartForms\Assets
  */
 class BaseInput {
-
     /**
      * Initializes the BaseInput instance.
-     * 
-     * @param {object} fieldset 
-     * @param {State}  state 
+     *
+     * @param {object} fieldset
+     * @param {State}  state
      */
     constructor(fieldset, state) {
-
         // Sets the Input's initial state.
         this._fieldset = fieldset;
-        this._state    = state;
-        this._input    = null;
-        this._name     = null;
+        this._state = state;
+        this._input = null;
+        this._name = null;
 
-        this._value    = '';
-        this._initial  = '';
-        this._illegal  = false;
-        this._changed  = false;
+        this._value = '';
+        this._initial = '';
+        this._illegal = false;
+        this._changed = false;
 
-        this._required    = (fieldset.getAttribute('required') !== null);
-        this._recommended = (fieldset.getAttribute('recommended') !== null);
+        this._required = fieldset.getAttribute('required') !== null;
+        this._recommended = fieldset.getAttribute('recommended') !== null;
     }
 
     /**
      * Returns the name of the BaseInput.
-     * 
+     *
      * @return {string}
      */
     name() {
@@ -41,25 +39,25 @@ class BaseInput {
 
     /**
      * Validates if the input has changed its value since start.
-     * 
+     *
      * @return {boolean}
      */
     hasChanged() {
-        return (this._initial !== this._value);
+        return this._initial !== this._value;
     }
 
     /**
      * Validates if the input is currently holding an illegal value.
-     * 
+     *
      * @return {boolean}
      */
     isIllegal() {
-        return (this._required && this._value.trim().length === 0);
+        return this._required && this._value.trim().length === 0;
     }
 
     /**
      * Returns TRUE of field is Required. FALSE otherwise.
-     * 
+     *
      * @return {boolean}
      */
     isRequired() {
@@ -68,7 +66,7 @@ class BaseInput {
 
     /**
      * Returns TRUE of field is Recommended. FALSE otherwise.
-     * 
+     *
      * @return {boolean}
      */
     isRecommended() {
@@ -77,11 +75,10 @@ class BaseInput {
 
     /**
      * Processes the input's changes after an internal event is triggered.
-     * 
-     * @param {string} value 
+     *
+     * @param {string} value
      */
     processChange(value) {
-        
         // Loads the changed value into the class.
         this._value = value;
 
@@ -135,7 +132,6 @@ class BaseInput {
      * Processes the Input's state changed.
      */
     processState() {
-
         // Check current control's state.
         let state = State.NORMAL;
         if (this._illegal) {
@@ -154,23 +150,19 @@ class BaseInput {
 
     /**
      * Triggers a State change event.
-     * 
+     *
      * @param {State} state
      */
     triggerEvent(state) {
-
         // Configures Custom Event for State change.
-        let event = new CustomEvent(
-            'stateChange',
-            {
-                bubbles:    true,
-                cancelable: false,
-                detail: {
-                    state:   state,
-                    instance: this,
-                },
-            }
-        );
+        let event = new CustomEvent('stateChange', {
+            bubbles: true,
+            cancelable: false,
+            detail: {
+                state: state,
+                instance: this,
+            },
+        });
 
         // Triggers Custom Event.
         this._fieldset.dispatchEvent(event);

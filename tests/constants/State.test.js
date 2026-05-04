@@ -3,8 +3,14 @@ import State from '../../src/constants/State.js';
 
 describe('State enum', () => {
     const expected = [
-        'NORMAL', 'CHANGED', 'SELECTED', 'MANY',
-        'SUBMITTED', 'DEACTIVATED', 'ILLEGAL', 'REORDERED',
+        'NORMAL',
+        'CHANGED',
+        'SELECTED',
+        'MANY',
+        'SUBMITTED',
+        'DEACTIVATED',
+        'ILLEGAL',
+        'REORDERED',
     ];
 
     it.each(expected)('exposes %s', (key) => {
@@ -18,6 +24,8 @@ describe('State enum', () => {
 
     it('is frozen', () => {
         expect(Object.isFrozen(State)).toBe(true);
-        expect(() => { State.NORMAL = 'mutated'; }).toThrow();
+        expect(() => {
+            State.NORMAL = 'mutated';
+        }).toThrow();
     });
 });

@@ -1,21 +1,19 @@
-import State     from '../../constants/State';
+import State from '../../constants/State';
 import BaseInput from './BaseInput';
 
 /**
  * Form RadioInput Button handling class.
- * 
+ *
  * @package   SmartForms\Assets
  */
 class RadioInput extends BaseInput {
-
     /**
      * Initializes the RadioInput instance.
-     * 
-     * @param {object} fieldset 
-     * @param {State}  state 
+     *
+     * @param {object} fieldset
+     * @param {State}  state
      */
     constructor(fieldset, state) {
-
         // Calls parent class
         super(fieldset, state);
 
@@ -23,14 +21,13 @@ class RadioInput extends BaseInput {
         this._buttons = fieldset.querySelectorAll('input');
 
         // Configures all child radio buttons in the FIeldset.
-        this._buttons.forEach(input => {
-
+        this._buttons.forEach((input) => {
             // Collects the element's name.
             // Will be the same for all Checkboxes.
             this._name = input.getAttribute('name');
 
             // Sets up the control events.
-            input.addEventListener("change", e => this.onChange(e));
+            input.addEventListener('change', (e) => this.onChange(e));
 
             // Tries to load the initial value.
             if (input.checked) {
@@ -44,11 +41,10 @@ class RadioInput extends BaseInput {
 
     /**
      * Event handler for when the RadioInput changes value.
-     * 
-     * @param {event} e 
+     *
+     * @param {event} e
      */
     onChange(e) {
-
         if (e.target.checked) {
             this.processChange(e.target.value);
         }
@@ -58,7 +54,6 @@ class RadioInput extends BaseInput {
      * Processes the Input's state changed.
      */
     processState() {
-
         // Check current control's state.
         let state = State.NORMAL;
         if (this._value !== this._initial) {
