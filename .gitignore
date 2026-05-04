@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# Lockfiles (uncomment to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+docs/
+out/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+.turbo/
+.vite/
+.rollup.cache/
+.tsbuildinfo
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+.secrets/
+
+# Coverage / tests
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+playwright-report/
+
+# Editors / OS
+.idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.shared.json
+*.swp
+*.swo
+*.swn
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Local tool / agent state (never ship to clients)
+.cursor/
+.aider*
+.history/
+.devcontainer/.local/
+
+# Local-only configs
+.npmrc.local
+.env.local
+.local/
+*.local
+
+# Misc tmp / scratch
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+.tmp/
+tmp/
+scratch/
+
+# Working / generated docs
+docs/
