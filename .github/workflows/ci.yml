@@ -29,7 +29,7 @@ jobs:
       - run: npm test
       - name: Upload coverage
         if: matrix.node == 20
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: coverage
@@ -51,7 +51,7 @@ jobs:
           test -f dist/smartforms.esm.js
           test -f dist/smartforms.cjs.js
           test -f dist/smartforms.umd.js
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist
