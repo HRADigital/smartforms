@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>smartforms — list example</title>
+</head>
+<body>
+    <form class="smartform" id="users">
+        <div class="smartformlist">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" name="checkall-toggle" /></th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><input type="checkbox" name="cid[]" value="1" /></td><td>Ada</td></tr>
+                    <tr><td><input type="checkbox" name="cid[]" value="2" /></td><td>Linus</td></tr>
+                    <tr><td><input type="checkbox" name="cid[]" value="3" /></td><td>Grace</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav class="toolbar">
+            <button type="button" data-role="delete">Delete selected</button>
+            <button type="button" data-role="deleteall">Delete all</button>
+        </nav>
+    </form>
+
+    <script type="module">
+        import { autoInit } from '../src/index.js';
+        autoInit();
+    </script>
+</body>
+</html>

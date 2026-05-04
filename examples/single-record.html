@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>smartforms — single record example</title>
+    <style>
+        .is-changed { background: #fff8c4; }
+        .is-illegal { background: #ffd6d6; }
+        button[disabled] { opacity: .4; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <form class="smartform" id="profile">
+        <div class="smartformrecord">
+            <label>Name <input type="text"  name="name"  value="Ada" /></label>
+            <label>Email <input type="email" name="email" value="ada@example.com" /></label>
+        </div>
+
+        <nav class="toolbar">
+            <button type="button" data-role="update">Save</button>
+            <button type="button" data-role="cancel">Cancel</button>
+        </nav>
+    </form>
+
+    <script type="module">
+        import { autoInit } from '../src/index.js';
+        autoInit();
+    </script>
+</body>
+</html>
