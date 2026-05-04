@@ -1,6 +1,6 @@
 {
   "name": "@hradigital/smartforms",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "State-aware client-side form manager for static HTML forms. Tracks per-field state (new, unchanged, changed, invalid, empty) and toggles toolbar actions accordingly.",
   "keywords": [
     "form",
@@ -22,16 +22,16 @@
     "url": "https://github.com/HraDigital/smartforms/issues"
   },
   "type": "module",
-  "main": "./dist/smartforms.cjs.js",
-  "module": "./dist/smartforms.esm.js",
+  "main": "./dist/smartforms.cjs",
+  "module": "./dist/smartforms.mjs",
   "browser": "./dist/smartforms.umd.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/smartforms.esm.js",
-      "require": "./dist/smartforms.cjs.js",
-      "default": "./dist/smartforms.esm.js"
+      "import": "./dist/smartforms.mjs",
+      "require": "./dist/smartforms.cjs",
+      "default": "./dist/smartforms.mjs"
     },
     "./package.json": "./package.json"
   },
