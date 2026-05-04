@@ -11,8 +11,16 @@ describe('SmartForm', () => {
             <form class="smartform">
                 <div class="smartformlist">
                     <table>
-                        <thead><tr><th><input type="checkbox" name="checkall-toggle" /></th></tr></thead>
-                        <tbody><tr><td><input type="checkbox" name="cid[]" value="1" /></td></tr></tbody>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" name="checkall-toggle" /></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" name="cid[]" value="1" /></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </form>

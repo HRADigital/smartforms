@@ -8,9 +8,20 @@ describe('Row', () => {
 
     function makeRow(checked = false) {
         const wrapper = html`
-            <table><tbody>
-                <tr><td><input type="checkbox" name="cid[]" value="42" ${checked ? 'checked' : ''} /></td></tr>
-            </tbody></table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input
+                                type="checkbox"
+                                name="cid[]"
+                                value="42"
+                                ${checked ? 'checked' : ''}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         `;
         return wrapper.querySelector('tr');
     }

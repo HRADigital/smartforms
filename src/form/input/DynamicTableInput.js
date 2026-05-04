@@ -2,41 +2,41 @@ import State from '../../constants/State';
 
 /**
  * Form Dynamic Table Input handling class.
- * 
+ *
  * @package   SmartForms\Assets
  */
 class DynamicTableInput {
-
     /**
      * Initializes the Dynamic Table instance.
-     * 
-     * @param {object} table 
-     * @param {State}  state 
+     *
+     * @param {object} table
+     * @param {State}  state
      */
     constructor(table, state) {
-
         // Collects supplied parameters.
-        this._state    = state;
-        this._table    = table;
+        this._state = state;
+        this._table = table;
         this._fieldset = table.parentNode.querySelector('fieldset');
-        this._input    = this._fieldset.querySelector('select');
-        this._name     = this._table.querySelector('tbody input[type="hidden"]').name;
+        this._input = this._fieldset.querySelector('select');
+        this._name = this._table.querySelector('tbody input[type="hidden"]').name;
 
-        this._required    = (this._fieldset.getAttribute('required') !== null);
-        this._recommended = (this._fieldset.getAttribute('recommended') !== null);
+        this._required = this._fieldset.getAttribute('required') !== null;
+        this._recommended = this._fieldset.getAttribute('recommended') !== null;
 
         // Loads value's state.
         this._initial = [];
-        this._values  = [];
+        this._values = [];
         this.loadInitialValues();
 
         // Sets table changed event.
-        this._table.querySelector('tbody').addEventListener("DOMSubtreeModified", () => this.onDomChanged());
+        this._table
+            .querySelector('tbody')
+            .addEventListener('DOMSubtreeModified', () => this.onDomChanged());
     }
 
     /**
      * Returns the name of the BaseInput.
-     * 
+     *
      * @return {string}
      */
     name() {
@@ -45,11 +45,10 @@ class DynamicTableInput {
 
     /**
      * Validates if the input has changed its value since start.
-     * 
+     *
      * @return {boolean}
      */
     hasChanged() {
-
         // First, we'll just validate the lengths of both state arrays.
         if (this._values.length !== this._initial.length) {
             return true;
@@ -68,16 +67,16 @@ class DynamicTableInput {
 
     /**
      * Returns illegality for the Webcontrol.
-     * 
+     *
      * @returns {boolean}
      */
     isIllegal() {
-        return (this._required && this._values.length === 0);
+        return this._required && this._values.length === 0;
     }
 
     /**
      * Returns TRUE of field is Required. FALSE otherwise.
-     * 
+     *
      * @return {boolean}
      */
     isRequired() {
@@ -86,7 +85,7 @@ class DynamicTableInput {
 
     /**
      * Returns TRUE of field is Recommended. FALSE otherwise.
-     * 
+     *
      * @return {boolean}
      */
     isRecommended() {
@@ -107,13 +106,14 @@ class DynamicTableInput {
      * Loads Dynamic Table's current values.
      */
     loadCurrentValues() {
-
         // Gathers all the rows in the dynamic table.
-        let rows = this._table.querySelectorAll('tbody tr:not(.smartdynamicrow) input[type="hidden"]:first-of-type');
+        let rows = this._table.querySelectorAll(
+            'tbody tr:not(.smartdynamicrow) input[type="hidden"]:first-of-type',
+        );
 
         // Loads theirs values into the current value array.
         this._values = [];
-        rows.forEach(row => {
+        rows.forEach((row) => {
             this._values.push(row.value);
         });
 
@@ -125,7 +125,6 @@ class DynamicTableInput {
      * Edits the Webcontrol's Status styling.
      */
     editStatusStyles() {
-
         if (this.isIllegal()) {
             this._fieldset.classList.remove('changed');
             this._fieldset.classList.add('invalid');
@@ -142,7 +141,6 @@ class DynamicTableInput {
      * Event handler for when the table's DOM has changed.
      */
     onDomChanged() {
-
         // Loads current table's values.
         this.loadCurrentValues();
         this.editStatusStyles();
@@ -162,23 +160,19 @@ class DynamicTableInput {
 
     /**
      * Triggers a State change event.
-     * 
+     *
      * @param {State} state
      */
     triggerEvent(state) {
-
         // Configures Custom Event for State change.
-        let event = new CustomEvent(
-            'stateChange',
-            {
-                bubbles:    false,
-                cancelable: false,
-                detail: {
-                    state:   state,
-                    instance: this,
-                },
-            }
-        );
+        let event = new CustomEvent('stateChange', {
+            bubbles: false,
+            cancelable: false,
+            detail: {
+                state: state,
+                instance: this,
+            },
+        });
 
         // Triggers Custom Event.
         this._table.dispatchEvent(event);

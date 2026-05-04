@@ -48,11 +48,15 @@ describe('DynamicTableInput', () => {
         const empty = html`
             <div>
                 <fieldset required>
-                    <select name="picker"><option value="x">x</option></select>
+                    <select name="picker">
+                        <option value="x">x</option>
+                    </select>
                 </fieldset>
                 <table>
                     <tbody>
-                        <tr><td><input type="hidden" name="rows[]" value="" /></td></tr>
+                        <tr>
+                            <td><input type="hidden" name="rows[]" value="" /></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

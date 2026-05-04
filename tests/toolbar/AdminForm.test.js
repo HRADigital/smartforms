@@ -18,7 +18,7 @@ function makeFixture() {
     `;
     return {
         form: wrapper.querySelector('form'),
-        nav:  wrapper.querySelector('nav'),
+        nav: wrapper.querySelector('nav'),
     };
 }
 
@@ -33,9 +33,11 @@ describe('AdminForm', () => {
 
         form.submit = vi.fn();
 
-        nav.dispatchEvent(new CustomEvent('taskExecuted', {
-            detail: { task: ' SAVE ' },
-        }));
+        nav.dispatchEvent(
+            new CustomEvent('taskExecuted', {
+                detail: { task: ' SAVE ' },
+            }),
+        );
 
         expect(form.task.value).toBe('save');
         expect(form.submit).toHaveBeenCalledOnce();

@@ -17,7 +17,7 @@ function makeFixture() {
         </div>
     `;
     return {
-        nav:  wrapper.querySelector('nav'),
+        nav: wrapper.querySelector('nav'),
         form: wrapper.querySelector('form'),
     };
 }
@@ -35,9 +35,11 @@ describe('Toolbar', () => {
     it('reacts to formStateChange event by updating state', () => {
         const { nav, form } = makeFixture();
         const t = new Toolbar(nav, form);
-        form.dispatchEvent(new CustomEvent('formStateChange', {
-            detail: { state: State.CHANGED },
-        }));
+        form.dispatchEvent(
+            new CustomEvent('formStateChange', {
+                detail: { state: State.CHANGED },
+            }),
+        );
         expect(t.state()).toBe(State.CHANGED);
     });
 
@@ -54,9 +56,11 @@ describe('Toolbar', () => {
         const events = captureEvent(nav, 'taskExecuted');
 
         // Activate the button first by transitioning to CHANGED so click is allowed.
-        form.dispatchEvent(new CustomEvent('formStateChange', {
-            detail: { state: State.CHANGED },
-        }));
+        form.dispatchEvent(
+            new CustomEvent('formStateChange', {
+                detail: { state: State.CHANGED },
+            }),
+        );
 
         const saveAnchor = nav.querySelector('a[data-role="update"]');
         saveAnchor.click();

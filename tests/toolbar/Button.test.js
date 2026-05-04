@@ -64,7 +64,7 @@ describe('Button', () => {
 
     it('REORDERED state: REORDER/LINK active, others hidden', () => {
         const reorder = makeBtn(Roles.REORDER);
-        const update  = makeBtn(Roles.UPDATE);
+        const update = makeBtn(Roles.UPDATE);
         new Button(reorder).setState(State.REORDERED);
         new Button(update).setState(State.REORDERED);
         expect(reorder.hasAttribute('disabled')).toBe(false);

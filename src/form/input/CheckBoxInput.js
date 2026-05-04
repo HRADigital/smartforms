@@ -1,27 +1,25 @@
-import State     from '../../constants/State';
+import State from '../../constants/State';
 import BaseInput from './BaseInput';
 
 /**
  * Form Checkbox handling class.
- * 
+ *
  * @package   SmartForms\Assets
  */
 class CheckBoxInput extends BaseInput {
-
     /**
      * Initializes the CheckBoxInput instance.
-     * 
-     * @param {object} fieldset 
-     * @param {State}  state 
+     *
+     * @param {object} fieldset
+     * @param {State}  state
      */
     constructor(fieldset, state) {
-
         // Calls parent class
         super(fieldset, state);
 
         // Loads the initial state.
-        this._values  = [];
-        this._inputs  = fieldset.querySelectorAll('input');
+        this._values = [];
+        this._inputs = fieldset.querySelectorAll('input');
 
         // Process the initial state.
         this.initCheckBoxes();
@@ -31,16 +29,14 @@ class CheckBoxInput extends BaseInput {
      * Initializes the Fieldset Checkboxes.
      */
     initCheckBoxes() {
-
         // Loops through all the Fieldset's child checkboxes.
-        this._inputs.forEach(element => {
-
+        this._inputs.forEach((element) => {
             // Collects the element's name.
             // Will be the same for all Checkboxes.
             this._name = element.getAttribute('name');
 
             // Sets up the control events.
-            element.addEventListener("click", e => this.onClick(e));
+            element.addEventListener('click', (e) => this.onClick(e));
 
             // Loads the value for every checked element.
             if (element.checked && this._values.indexOf(element.value) < 0) {
@@ -56,11 +52,10 @@ class CheckBoxInput extends BaseInput {
 
     /**
      * Event handler for when the CheckBoxInput changes value.
-     * 
-     * @param {event} e 
+     *
+     * @param {event} e
      */
     onClick(e) {
-
         // Processes the onCLick event in the Checkbox.
         if (e.target.checked) {
             if (this._values.indexOf(e.target.value) < 0) {

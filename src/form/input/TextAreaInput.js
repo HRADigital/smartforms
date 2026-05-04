@@ -1,33 +1,31 @@
-import State     from '../../constants/State';
+import State from '../../constants/State';
 import BaseInput from './BaseInput';
 
 /**
  * Form Text Area handling class.
- * 
+ *
  * @package   SmartForms\Assets
  */
 class TextAreaInput extends BaseInput {
-
     /**
      * Initializes the TextAreaInput instance.
-     * 
-     * @param {object} fieldset 
-     * @param {State}  state 
+     *
+     * @param {object} fieldset
+     * @param {State}  state
      */
     constructor(fieldset, state) {
-
         // Calls parent class
         super(fieldset, state);
 
         // Loads the initial state.
-        this._input   = fieldset.querySelector('textarea');
-        this._name    = this._input.getAttribute('name');
-        this._value   = this._input.value.trim();
+        this._input = fieldset.querySelector('textarea');
+        this._name = this._input.getAttribute('name');
+        this._value = this._input.value.trim();
         this._initial = this._value;
 
         // Sets up the control events.
-        this._input.addEventListener("change", e => this.onChange(e));
-        this._input.addEventListener("keyup", e => this.onKey(e));
+        this._input.addEventListener('change', (e) => this.onChange(e));
+        this._input.addEventListener('keyup', (e) => this.onKey(e));
 
         // Process the initial state.
         this.processChange(this._value);
@@ -35,8 +33,8 @@ class TextAreaInput extends BaseInput {
 
     /**
      * Event handler for when the SelectInput changes value.
-     * 
-     * @param {event} e 
+     *
+     * @param {event} e
      */
     onChange(e) {
         this.processChange(e.target.value.trim());
@@ -44,8 +42,8 @@ class TextAreaInput extends BaseInput {
 
     /**
      * Event handler for when the TextInput changes value, while editing it.
-     * 
-     * @param {event} e 
+     *
+     * @param {event} e
      */
     onKey(e) {
         this.processChange(e.target.value.trim());
