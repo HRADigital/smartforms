@@ -59,6 +59,8 @@ jobs:
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
+    # Free tier requires a public repo (GHAS-paid otherwise). Skip when private.
+    if: github.event.repository.visibility == 'public'
     permissions:
       contents: read
       security-events: write
