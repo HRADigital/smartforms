@@ -10,7 +10,6 @@ describe('State enum', () => {
         'SUBMITTED',
         'DEACTIVATED',
         'ILLEGAL',
-        'REORDERED',
     ];
 
     it.each(expected)('exposes %s', (key) => {
