@@ -1,4 +1,3 @@
-import State from '../../constants/State';
 import BaseInput from './BaseInput';
 
 /**
@@ -23,7 +22,7 @@ class TextInput extends BaseInput {
         this._rule = this._input.getAttribute('data-rule');
         this._value = this._input.getAttribute('value');
         this._limit = this._input.getAttribute('data-limit');
-        let showGuide = this._input.getAttribute('data-guide');
+        const showGuide = this._input.getAttribute('data-guide');
         this._guide = null;
         this._initial = this._value;
 
@@ -68,19 +67,19 @@ class TextInput extends BaseInput {
         }
 
         // Loads the character guide to the webcontrol.
-        let parent = document.createElement('SPAN');
+        const parent = document.createElement('SPAN');
         parent.className = 'smartguide';
 
         this._guide = document.createElement('SPAN');
-        let cText = document.createTextNode(this._value.length);
+        const cText = document.createTextNode(this._value.length);
         this._guide.appendChild(cText);
 
-        let total = document.createElement('SPAN');
-        let tText = document.createTextNode(this._limit);
+        const total = document.createElement('SPAN');
+        const tText = document.createTextNode(this._limit);
         total.appendChild(tText);
 
-        let space = document.createElement('SPAN');
-        let sText = document.createTextNode('/');
+        const space = document.createElement('SPAN');
+        const sText = document.createTextNode('/');
         space.appendChild(sText);
 
         parent.appendChild(this._guide);
@@ -97,7 +96,7 @@ class TextInput extends BaseInput {
      */
     processGuide(length) {
         // Updates the character's counter.
-        let textnode = document.createTextNode(length);
+        const textnode = document.createTextNode(length);
         this._guide.replaceChild(textnode, this._guide.childNodes[0]);
 
         // Validates if a warning should be processed, if the character limit is reaching the limit.
@@ -123,7 +122,7 @@ class TextInput extends BaseInput {
      * @param {event} e
      */
     onKeyUp(e) {
-        let value = e.target.value;
+        const value = e.target.value;
         this.processChange(value);
 
         if (this._guide !== null) {

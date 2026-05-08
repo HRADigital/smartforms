@@ -1,4 +1,3 @@
-import State from '../../constants/State';
 import TextInput from './TextInput';
 
 /**
@@ -24,7 +23,7 @@ class DateTimeInput extends TextInput {
         this._initial = this._value;
         this._guide = null;
 
-        let pattern = this._input.getAttribute('pattern');
+        const pattern = this._input.getAttribute('pattern');
         this._rule = pattern ? new RegExp(pattern) : null;
 
         // Process the initial state.

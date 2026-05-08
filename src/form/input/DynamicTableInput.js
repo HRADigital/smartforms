@@ -108,7 +108,7 @@ class DynamicTableInput {
      */
     loadCurrentValues() {
         // Gathers all the rows in the dynamic table.
-        let rows = this._table.querySelectorAll(
+        const rows = this._table.querySelectorAll(
             'tbody tr:not(.smartdynamicrow) input[type="hidden"]:first-of-type',
         );
 
@@ -166,7 +166,7 @@ class DynamicTableInput {
      */
     triggerEvent(state) {
         // Configures Custom Event for State change.
-        let event = new CustomEvent('stateChange', {
+        const event = new CustomEvent('stateChange', {
             bubbles: false,
             cancelable: false,
             detail: {

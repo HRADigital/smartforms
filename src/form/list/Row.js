@@ -74,7 +74,7 @@ class Row {
      */
     triggerEvent(state) {
         // Configures Custom Event for State change.
-        let event = new CustomEvent('stateChange', {
+        const event = new CustomEvent('stateChange', {
             bubbles: false,
             cancelable: false,
             detail: {

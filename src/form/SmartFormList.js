@@ -86,7 +86,7 @@ class SmartFormList {
     onStateChange(e) {
         // We'll need to evaluate the Row's current state, in order to procees the
         // Row's state tracking.
-        let index = this._changed.indexOf(e.detail.instance.id());
+        const index = this._changed.indexOf(e.detail.instance.id());
 
         // Manages the changed element's array.
         if (e.detail.state === State.NORMAL && index >= 0) {
@@ -127,7 +127,7 @@ class SmartFormList {
      */
     triggerEvent() {
         // Configures Custom Event for State change.
-        let event = new CustomEvent('formStateChange', {
+        const event = new CustomEvent('formStateChange', {
             bubbles: true,
             cancelable: false,
             detail: {

@@ -70,7 +70,7 @@ class SmartFormRecord {
      */
     searchAndLoadWebcontrols(state) {
         // Loads all main controls.
-        let selectors = [
+        const selectors = [
             'fieldset input:not(.ignore):not([type=checkbox]):not([type=radio])',
             'fieldset textarea:not(.ignore)',
             'fieldset select:not(.ignore)',
@@ -96,22 +96,22 @@ class SmartFormRecord {
         }
 
         // Loops throught all the provided selectors.
-        let names = [];
+        const names = [];
         this._form.querySelectorAll(selectors.join()).forEach((input) => {
             // Checks if the  input hasn't been processed yet.
             // Protection against Checkboxes and Radio Buttons.
-            let name = input.getAttribute('name');
+            const name = input.getAttribute('name');
             if (names.indexOf(name) >= 0) {
                 return;
             }
             names.push(name);
 
             // Skip input types that have no registered handler.
-            let inputType = this.getClassName(input);
+            const inputType = this.getClassName(input);
             if (!inputs[inputType]) return;
 
             // Collects parent Fieldset, and sets StateChange event handler configuration.
-            let fieldset = input.closest('fieldset');
+            const fieldset = input.closest('fieldset');
             fieldset.addEventListener('stateChange', (e) => this.onStateChange(e), false);
 
             this._inputs.push(new inputs[inputType](fieldset, state));
@@ -128,7 +128,7 @@ class SmartFormRecord {
             table.addEventListener('stateChange', (e) => this.onStateChange(e), false);
 
             // Adds the input to the Webcontrol's list, and finishes formatting it.
-            let inputType = this.getClassName(table);
+            const inputType = this.getClassName(table);
             this._inputs.push(new inputs[inputType](table, state));
         });
     }
@@ -177,7 +177,7 @@ class SmartFormRecord {
      * @param {State}  state
      */
     checkChanged(input, state) {
-        let index = this._changed.indexOf(input.name());
+        const index = this._changed.indexOf(input.name());
 
         if (state === State.NORMAL && index >= 0) {
             this._changed.splice(index, 1);
@@ -192,7 +192,7 @@ class SmartFormRecord {
      * @param {object} input
      */
     checkIllegal(input) {
-        let index = this._illegal.indexOf(input.name());
+        const index = this._illegal.indexOf(input.name());
 
         if (index >= 0 && !input.isIllegal()) {
             this._illegal.splice(index, 1);
@@ -242,7 +242,7 @@ class SmartFormRecord {
      */
     triggerEvent() {
         // Configures Custom Event for State change.
-        let event = new CustomEvent('formStateChange', {
+        const event = new CustomEvent('formStateChange', {
             bubbles: true,
             cancelable: false,
             detail: {
