@@ -1,4 +1,4 @@
-import State from '../../constants/State';
+import State from '../../constants/State.js';
 import { log } from '../../logger.js';
 
 /**

@@ -1,6 +1,6 @@
-import State from '../constants/State';
-import SmartFormList from './SmartFormList';
-import SmartFormRecord from './SmartFormRecord';
+import State from '../constants/State.js';
+import SmartFormList from './SmartFormList.js';
+import SmartFormRecord from './SmartFormRecord.js';
 
 /**
  * Main form's handling class.

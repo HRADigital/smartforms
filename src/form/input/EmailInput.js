@@ -1,4 +1,4 @@
-import TextInput from './TextInput';
+import TextInput from './TextInput.js';
 
 /**
  * Form Email Input handling class.
@@ -16,7 +16,10 @@ class EmailInput extends TextInput {
             return true;
         }
 
-        if (this._value.trim().length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this._value.trim())) {
+        if (
+            this._value.trim().length > 0 &&
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this._value.trim())
+        ) {
             return true;
         }
 

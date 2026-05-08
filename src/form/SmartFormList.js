@@ -1,5 +1,5 @@
-import Row from './list/Row';
-import State from '../constants/State';
+import Row from './list/Row.js';
+import State from '../constants/State.js';
 import { log } from '../logger.js';
 
 /**
@@ -147,8 +147,9 @@ class SmartFormList {
      * @returns {array}
      */
     selectedIds() {
-        return Array.from(this._element.querySelectorAll('input[name="cid[]"]:checked'))
-            .map((cb) => cb.value);
+        return Array.from(this._element.querySelectorAll('input[name="cid[]"]:checked')).map(
+            (cb) => cb.value,
+        );
     }
 
     /**
@@ -166,7 +167,9 @@ class SmartFormList {
     rebaseline() {
         this._changed = [];
         if (this._toggle) this._toggle.checked = false;
-        this._element.querySelectorAll('input[name="cid[]"]').forEach((cb) => { cb.checked = false; });
+        this._element.querySelectorAll('input[name="cid[]"]').forEach((cb) => {
+            cb.checked = false;
+        });
         if (this._state !== State.NORMAL) {
             this._state = State.NORMAL;
             this.triggerEvent();

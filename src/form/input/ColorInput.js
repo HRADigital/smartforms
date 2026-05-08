@@ -1,4 +1,4 @@
-import BaseInput from './BaseInput';
+import BaseInput from './BaseInput.js';
 
 /**
  * Form Color Input handling class.

@@ -1,5 +1,5 @@
-import State from '../../constants/State';
-import BaseInput from './BaseInput';
+import State from '../../constants/State.js';
+import BaseInput from './BaseInput.js';
 
 /**
  * Form RadioInput Button handling class.

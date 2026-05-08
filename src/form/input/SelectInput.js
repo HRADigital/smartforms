@@ -1,4 +1,4 @@
-import BaseInput from './BaseInput';
+import BaseInput from './BaseInput.js';
 
 /**
  * Form Select Input handling class.

@@ -1,6 +1,6 @@
-import Button from './Button';
-import State from '../constants/State';
-import Tasks from '../constants/Tasks';
+import Button from './Button.js';
+import State from '../constants/State.js';
+import Tasks from '../constants/Tasks.js';
 import { log, warn } from '../logger.js';
 
 /**
@@ -66,7 +66,11 @@ class Toolbar {
      * @param {State} state - New State value to be set on the Toolbar.
      */
     setState(state) {
-        log('[SmartForms] toolbar setState', { from: this._state, to: state, buttons: this._buttons.length });
+        log('[SmartForms] toolbar setState', {
+            from: this._state,
+            to: state,
+            buttons: this._buttons.length,
+        });
 
         // Propagates the supplied State to all buttons.
         this._buttons.forEach((button) => {

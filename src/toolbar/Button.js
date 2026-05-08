@@ -1,5 +1,5 @@
-import State from '../constants/State';
-import Roles from '../constants/Roles';
+import State from '../constants/State.js';
+import Roles from '../constants/Roles.js';
 import { log } from '../logger.js';
 
 /**
@@ -24,13 +24,13 @@ class Button {
 
         // Declares State related actions.
         this._actions = {
-            [State.NORMAL]:      this.setStateNormal.bind(this),
-            [State.CHANGED]:     this.setStateChanged.bind(this),
-            [State.SELECTED]:    this.setStateSelected.bind(this),
-            [State.MANY]:        this.setStateMany.bind(this),
-            [State.ILLEGAL]:     this.setStateIllegal.bind(this),
+            [State.NORMAL]: this.setStateNormal.bind(this),
+            [State.CHANGED]: this.setStateChanged.bind(this),
+            [State.SELECTED]: this.setStateSelected.bind(this),
+            [State.MANY]: this.setStateMany.bind(this),
+            [State.ILLEGAL]: this.setStateIllegal.bind(this),
             [State.DEACTIVATED]: this.setStateDeactivated.bind(this),
-            [State.SUBMITTED]:   this.setStateSubmitted.bind(this),
+            [State.SUBMITTED]: this.setStateSubmitted.bind(this),
         };
     }
 

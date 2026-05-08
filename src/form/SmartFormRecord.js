@@ -1,17 +1,17 @@
-import State from '../constants/State';
+import State from '../constants/State.js';
 import { log } from '../logger.js';
-import TextInput from './input/TextInput';
-import EmailInput from './input/EmailInput';
-import UrlInput from './input/UrlInput';
-import NumberInput from './input/NumberInput';
-import SelectInput from './input/SelectInput';
-import FileInput from './input/FileInput';
-import ColorInput from './input/ColorInput';
-import TextAreaInput from './input/TextAreaInput';
-import CheckBoxInput from './input/CheckBoxInput';
-import DateTimeInput from './input/DateTimeInput';
-import RadioInput from './input/RadioInput';
-import DynamicTableInput from './input/DynamicTableInput';
+import TextInput from './input/TextInput.js';
+import EmailInput from './input/EmailInput.js';
+import UrlInput from './input/UrlInput.js';
+import NumberInput from './input/NumberInput.js';
+import SelectInput from './input/SelectInput.js';
+import FileInput from './input/FileInput.js';
+import ColorInput from './input/ColorInput.js';
+import TextAreaInput from './input/TextAreaInput.js';
+import CheckBoxInput from './input/CheckBoxInput.js';
+import DateTimeInput from './input/DateTimeInput.js';
+import RadioInput from './input/RadioInput.js';
+import DynamicTableInput from './input/DynamicTableInput.js';
 
 // Collection of available inputs.
 const inputs = {
@@ -252,7 +252,12 @@ class SmartFormRecord {
         });
 
         // Triggers Custom Event.
-        log('[SmartForms] formStateChange (record)', { state: this._state, changed: this._changed, illegal: this._illegal, instance: this });
+        log('[SmartForms] formStateChange (record)', {
+            state: this._state,
+            changed: this._changed,
+            illegal: this._illegal,
+            instance: this,
+        });
         this._form.dispatchEvent(event);
     }
 
