@@ -1,4 +1,5 @@
 import State from '../constants/State';
+import { log } from '../logger.js';
 import TextInput from './input/TextInput';
 import EmailInput from './input/EmailInput';
 import UrlInput from './input/UrlInput';
@@ -251,7 +252,23 @@ class SmartFormRecord {
         });
 
         // Triggers Custom Event.
+        log('[SmartForms] formStateChange (record)', { state: this._state, changed: this._changed, illegal: this._illegal, instance: this });
         this._form.dispatchEvent(event);
+    }
+
+    /**
+     * Resets the record to its baseline state.
+     */
+    rebaseline() {
+        for (const input of this._inputs) {
+            input.rebaseline();
+        }
+        this._changed = [];
+        this._illegal = [];
+        if (this._state !== State.NORMAL) {
+            this._state = State.NORMAL;
+            this.triggerEvent();
+        }
     }
 }
 

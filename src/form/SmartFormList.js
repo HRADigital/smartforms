@@ -1,5 +1,6 @@
 import Row from './list/Row';
 import State from '../constants/State';
+import { log } from '../logger.js';
 
 /**
  * Form's List handling class.
@@ -136,7 +137,40 @@ class SmartFormList {
         });
 
         // Triggers Custom Event.
+        log('[SmartForms] formStateChange (list)', { state: this._state, instance: this });
         this._element.dispatchEvent(event);
+    }
+
+    /**
+     * Returns the IDs of selected rows.
+     *
+     * @returns {array}
+     */
+    selectedIds() {
+        return Array.from(this._element.querySelectorAll('input[name="cid[]"]:checked'))
+            .map((cb) => cb.value);
+    }
+
+    /**
+     * Returns the ID of the selected row if exactly one row is selected, null otherwise.
+     *
+     * @returns {string|null}
+     */
+    id() {
+        return this._changed.length === 1 ? this._changed[0] : null;
+    }
+
+    /**
+     * Resets the list to its baseline state.
+     */
+    rebaseline() {
+        this._changed = [];
+        if (this._toggle) this._toggle.checked = false;
+        this._element.querySelectorAll('input[name="cid[]"]').forEach((cb) => { cb.checked = false; });
+        if (this._state !== State.NORMAL) {
+            this._state = State.NORMAL;
+            this.triggerEvent();
+        }
     }
 }
 

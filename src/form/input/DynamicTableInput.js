@@ -1,4 +1,5 @@
 import State from '../../constants/State';
+import { log } from '../../logger.js';
 
 /**
  * Form Dynamic Table Input handling class.
@@ -175,6 +176,7 @@ class DynamicTableInput {
         });
 
         // Triggers Custom Event.
+        log('[SmartForms] input stateChange (table)', { name: this.name?.() ?? null, state, instance: this });
         this._table.dispatchEvent(event);
         this._fieldset.dispatchEvent(event);
     }

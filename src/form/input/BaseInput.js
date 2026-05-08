@@ -1,4 +1,5 @@
 import State from '../../constants/State';
+import { log } from '../../logger.js';
 
 /**
  * Form Base Input handling class.
@@ -175,7 +176,16 @@ class BaseInput {
         });
 
         // Triggers Custom Event.
+        log('[SmartForms] input stateChange', { name: this.name?.() ?? null, state, instance: this });
         this._fieldset.dispatchEvent(event);
+    }
+
+    /**
+     * Resets the input to its baseline state.
+     */
+    rebaseline() {
+        this._initial = this._value;
+        this.setStateNormal();
     }
 }
 
