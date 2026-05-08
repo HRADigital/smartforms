@@ -4,13 +4,15 @@ import Roles from '../../src/constants/Roles.js';
 describe('Roles enum', () => {
     const expected = [
         'CREATE',
+        'EDIT',
         'UPDATE',
         'UPDATEALL',
         'DELETE',
         'DELETEALL',
+        'DESTROY',
+        'BACK',
+        'TOGGLE',
         'CANCEL',
-        'LINK',
-        'REORDER',
     ];
 
     it.each(expected)('exposes %s', (key) => {
