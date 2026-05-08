@@ -1,66 +1,107 @@
-export { default as SmartForm } from './form/SmartForm';
-export { default as SmartFormList } from './form/SmartFormList';
-export { default as SmartFormRecord } from './form/SmartFormRecord';
+import SmartForm from './form/SmartForm.js';
+import SmartFormList from './form/SmartFormList.js';
+import SmartFormRecord from './form/SmartFormRecord.js';
+import AdminForm from './toolbar/AdminForm.js';
+import Toolbar from './toolbar/Toolbar.js';
+import Button from './toolbar/Button.js';
+import Roles from './constants/Roles.js';
+import State from './constants/State.js';
+import Tasks from './constants/Tasks.js';
+import TaskExecutor from './http/TaskExecutor.js';
+import { toggleDebug } from './logger.js';
 
-export { default as BaseInput } from './form/input/BaseInput';
-export { default as TextInput } from './form/input/TextInput';
-export { default as EmailInput } from './form/input/EmailInput';
-export { default as NumberInput } from './form/input/NumberInput';
-export { default as UrlInput } from './form/input/UrlInput';
-export { default as ColorInput } from './form/input/ColorInput';
-export { default as DateTimeInput } from './form/input/DateTimeInput';
-export { default as FileInput } from './form/input/FileInput';
-export { default as TextAreaInput } from './form/input/TextAreaInput';
-export { default as CheckBoxInput } from './form/input/CheckBoxInput';
-export { default as RadioInput } from './form/input/RadioInput';
-export { default as SelectInput } from './form/input/SelectInput';
-export { default as DynamicTableInput } from './form/input/DynamicTableInput';
+const formRegistry = new WeakMap();
 
-export { default as Row } from './form/list/Row';
+function registerForm(form, instance) {
+  formRegistry.set(form, instance);
+}
 
-export { default as Toolbar } from './toolbar/Toolbar';
-export { default as Button } from './toolbar/Button';
-export { default as AdminForm } from './toolbar/AdminForm';
+function getForm(form) {
+  return formRegistry.get(form) || null;
+}
 
-export { default as State } from './constants/State';
-export { default as Roles } from './constants/Roles';
-export { default as Tasks } from './constants/Tasks';
+function autoInit(root = document) {
+  const forms = root.querySelectorAll('form.smartform, form.smartformlist');
+  forms.forEach((form) => {
+    const isList = form.classList.contains('smartformlist') && !form.classList.contains('smartform');
+    const instance = isList ? new SmartFormList(form, State.NORMAL) : new SmartForm(form);
+    registerForm(form, instance);
 
-import SmartForm from './form/SmartForm';
-import SmartFormList from './form/SmartFormList';
-import Toolbar from './toolbar/Toolbar';
-import AdminForm from './toolbar/AdminForm';
+    const nav = form.querySelector('nav.toolbar');
+    if (nav !== null) {
+      new Toolbar(nav, form);
+    }
 
-export function autoInit({
-    formSelector = 'form.smartform, form.smartformlist',
-    toolbarSelector = 'nav.toolbar',
-} = {}) {
-    const result = [];
+    new AdminForm(form);
+  });
 
-    document.querySelectorAll(formSelector).forEach((form) => {
-        const nav = form.querySelector(toolbarSelector);
+  // Wire generic state trackers: any element with `data-track-form="<formId>"`
+  // mirrors that form's state via the `disabled` class. Active only on NORMAL.
+  const trackers = root.querySelectorAll('[data-track-form]');
+  trackers.forEach((el) => {
+    const formId = el.getAttribute('data-track-form');
+    const form = formId ? document.getElementById(formId) : null;
+    if (!form) return;
 
-        try {
-            const isList = form.classList.contains('smartformlist') && !form.classList.contains('smartform');
-            const formInstance = isList ? new SmartFormList(form) : new SmartForm(form);
-
-            let admin = null;
-            if (nav !== null) {
-                const toolbar = new Toolbar(nav, form);
-                admin = new AdminForm(form, toolbar);
-            }
-
-            result.push({ form: formInstance, admin });
-        } catch (e) {
-            console.error('[SmartForms] autoInit failed for form', form.id, e);
+    const sync = (state) => {
+      const isNormal = state === State.NORMAL;
+      el.classList.toggle('disabled', !isNormal);
+      el.setAttribute('aria-disabled', isNormal ? 'false' : 'true');
+      if (el.tagName === 'A') {
+        if (isNormal) {
+          el.removeAttribute('tabindex');
+        } else {
+          el.setAttribute('tabindex', '-1');
         }
+      }
+    };
+    sync(State.NORMAL);
+    form.addEventListener('formStateChange', (e) => {
+      if (e && e.detail && typeof e.detail.state !== 'undefined') {
+        sync(e.detail.state);
+      }
     });
-
-    return result;
+  });
 }
 
-if (document.readyState === 'loading') {
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => autoInit());
-} else {
+  } else {
     autoInit();
+  }
 }
+
+export {
+  SmartForm,
+  SmartFormList,
+  SmartFormRecord,
+  AdminForm,
+  Toolbar,
+  Button,
+  Roles,
+  State,
+  Tasks,
+  TaskExecutor,
+  autoInit,
+  registerForm,
+  getForm,
+  toggleDebug,
+};
+
+export default {
+  SmartForm,
+  SmartFormList,
+  SmartFormRecord,
+  AdminForm,
+  Toolbar,
+  Button,
+  Roles,
+  State,
+  Tasks,
+  TaskExecutor,
+  autoInit,
+  registerForm,
+  getForm,
+  toggleDebug,
+};
