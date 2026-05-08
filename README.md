@@ -40,36 +40,34 @@ Or load the UMD build directly in the browser:
 ## Quick start — single record
 
 ```html
-<form class="smartform" id="profile">
+<form class="smartform" data-resource="users">
+    <input type="hidden" name="id" value="7" />
     <div class="smartformrecord">
         <input type="text"  name="name"  value="Ada" />
         <input type="email" name="email" value="ada@example.com" />
     </div>
 
     <nav class="toolbar">
-        <button type="button" data-role="update" data-task="update">Save</button>
+        <button type="button" data-role="update">Save</button>
         <button type="button" data-role="cancel">Cancel</button>
     </nav>
 </form>
 ```
 
-> The `data-task` values used here (`update`, `store`, `destroy`, ...) follow Laravel's resource-controller naming. They are conventions, not validated by the package — see [Default `data-task` values](#default-data-task-values) below.
-
 ```js
-import { SmartForm, AdminForm } from '@hradigital/smartforms';
+import { autoInit } from '@hradigital/smartforms';
 
-const form    = new SmartForm(document.querySelector('#profile'));
-const toolbar = new AdminForm(form, document.querySelector('#profile nav.toolbar'));
+autoInit(); // scans for forms and toolbars
 ```
 
-When a user edits a field, `smartforms` flips the field state to `CHANGED`, the form's overall state follows, and the `update` / `cancel` buttons enable themselves automatically.
+When a user edits a field, `smartforms` flips the field state to `CHANGED`, the form's overall state follows, and the `update` / `cancel` buttons enable themselves automatically. Clicking `update` executes `PUT /users/7` (the default task for the `update` role, with the form's resource and ID auto-inserted). Click `cancel` to reset the form.
 
 ---
 
 ## Quick start — list of records
 
 ```html
-<form class="smartform" id="users">
+<form class="smartform" data-resource="users">
     <div class="smartformlist">
         <table>
             <thead>
@@ -87,17 +85,16 @@ When a user edits a field, `smartforms` flips the field state to `CHANGED`, the 
 
     <nav class="toolbar">
         <a href="/users/create" data-role="create">New</a>
-        <button type="button" data-role="delete" data-task="destroy">Delete selected</button>
-        <button type="button" data-role="deleteall" data-task="destroyMany">Delete all</button>
+        <button type="button" data-role="delete">Delete selected</button>
+        <button type="button" data-role="deleteall">Delete all</button>
     </nav>
 </form>
 ```
 
 ```js
-import { SmartForm, AdminForm } from '@hradigital/smartforms';
+import { autoInit } from '@hradigital/smartforms';
 
-const form = new SmartForm(document.querySelector('#users'));
-new AdminForm(form, document.querySelector('#users nav.toolbar'));
+autoInit(); // scans for forms and toolbars
 ```
 
 ---
@@ -248,65 +245,156 @@ The toolbar may be placed anywhere inside the form: before or after the `smartfo
 
 Buttons inside `nav.toolbar` are wired by their `data-role`:
 
-`create`, `update`, `updateall`, `delete`, `deleteall`, `cancel`, `link`, `reorder`.
+`create`, `update`, `updateall`, `delete`, `deleteall`, `toggle`, `cancel`.
 
-### `data-task` — required for action roles
+Each role resolves to a default HTTP Task descriptor when clicked. The `data-task` attribute on the button can override the default — see [HTTP Tasks](#http-tasks) below.
 
-Every role that submits the form must also carry a `data-task` attribute. On click the package writes that value into the form's `task` field (if one exists) and dispatches `submit`, so the server knows which action ran. Without `data-task`, the click handler returns early — the button looks active but does nothing through SmartForms.
+| Role                                     | Default task                    | Notes                                    |
+| ---------------------------------------- | ------------------------------- | ---------------------------------------- |
+| `create`                                 | `POST /{resource}`              | New record; often rendered as `<a href>` navigation. |
+| `update`                                 | `PUT /{resource}/{id}`          | Single-record update.                    |
+| `updateall`                              | `PUT /{resource}?ids={ids}`     | Bulk update; query-string ID list.       |
+| `delete`                                 | `DELETE /{resource}/{id}`       | Single-record delete.                    |
+| `deleteall`                              | `DELETE /{resource}?ids={ids}`  | Bulk delete; query-string ID list.       |
+| `toggle`                                 | `PATCH /{resource}/{id}`        | Single-record toggle (async). Enabled in `SELECTED` state only. |
+| `cancel`                                 | _(special)_                     | Calls `form.reset()` — no HTTP task.     |
 
-| Role                                     | `data-task` required?          | Notes                                                          |
-| ---------------------------------------- | ------------------------------ | -------------------------------------------------------------- |
-| `create`                                 | only when used as a `<button>` | Used as `<a href>`, native navigation handles the action.      |
-| `update`, `updateall`, `delete`, `deleteall`, `reorder` | yes             | Value is what the server reads from the form's `task` field.   |
-| `cancel`                                 | no                             | Calls `form.reset()` directly — no submit.                     |
-| `link`                                   | no                             | Click falls through to native anchor navigation.               |
+---
 
-The package does not validate the contents of `data-task` — it's a free-form string handed to the server. See "Default `data-task` values" below for the recommended convention.
+## HTTP Tasks
 
-### Default `data-task` values
+The `data-task` attribute encodes an HTTP verb and endpoint using a 3-segment format:
 
-To keep server-side wiring predictable, the recommended convention follows Laravel's resource-controller action names. The library ships these as a `Tasks` constants module so you can reference them from JS (or just hard-code the strings in your templates):
+```
+[mode:][verb:]endpoint
+```
+
+- **mode** (optional): `sync` or `async`. If omitted, determined by the verb (GET/POST/PUT/DELETE → sync; PATCH → async).
+- **verb** (optional): HTTP verb (`get`, `post`, `put`, `patch`, `delete`, case-insensitive). If omitted, defaults to `GET`.
+- **endpoint** (required): Path or URL template (e.g. `/users`, `/users/{id}`, `/api:v2/users/{resource}/{id}`).
+
+Examples:
+
+```html
+<!-- sync GET: redirects to /users -->
+<button data-role="create" data-task="/users">View all</button>
+
+<!-- sync POST: submits form to /users via POST -->
+<button data-role="create" data-task="post:/users">Save</button>
+
+<!-- sync PUT: submits form via POST with _method=PUT -->
+<button data-role="update" data-task="put:/users/{id}">Update</button>
+
+<!-- async PATCH: fetch with Content-Type: application/json -->
+<button data-role="toggle" data-task="async:patch:/users/{id}/publish">Toggle</button>
+
+<!-- custom endpoint (override default) -->
+<button data-role="update" data-task="put:/api/v2/users/{id}">Save (v2)</button>
+```
+
+### Endpoint token substitution
+
+Endpoints support three tokens:
+
+| Token | Filled with | Context |
+| --- | --- | --- |
+| `{resource}` | Form's `data-resource` attribute | Copied from `<form data-resource="…">` |
+| `{id}` | Form's `<input name="id">` value (record) or selected row ID (list, `SELECTED` state) | Auto-appended if missing on PUT/PATCH/DELETE |
+| `{ids}` | Comma-joined list of checked row IDs | `SmartFormList.selectedIds()` |
+
+Example:
+
+```html
+<form class="smartform" data-resource="users">
+    <input type="hidden" name="id" value="7" />
+    <!-- Resolves to: PUT /users/7 -->
+    <button data-role="update" data-task="put:/{resource}/{id}">Save</button>
+</form>
+```
+
+### ID auto-append
+
+If a PUT/PATCH/DELETE endpoint does not include `{id}` and a form `<input name="id">` exists, the ID is automatically appended:
+
+```html
+<button data-role="update" data-task="put:/users">Update</button>
+<!-- With <input name="id" value="7">, resolves to: PUT /users/7 -->
+```
+
+### Verb → mode defaults
+
+| Verb | Default mode |
+| --- | --- |
+| GET | sync |
+| POST | sync |
+| PUT | sync |
+| PATCH | async |
+| DELETE | sync |
+
+A `sync` request either navigates (GET) or submits the form via POST with method spoofing. An `async` request uses `fetch` with optional CSRF headers and dispatches response events.
+
+### Sync vs. async
+
+**Sync (form submission):**
+- GET: `window.location.assign(url)`
+- POST/PUT/PATCH/DELETE: set form action, spoof method via `<input name="_method">`, submit normally
+
+**Async (fetch):**
+- Sends `Content-Type: application/json` + serialized form data (unless files present, then `multipart/form-data`)
+- Includes CSRF header from `<meta name="csrf-token">` (configurable)
+- Dispatches `taskCompleted` or `taskFailed` events (see below)
+- On success, calls `form.rebaseline()` to reset state
+
+### CSRF configuration
+
+By default, the library reads CSRF tokens from:
+
+```html
+<meta name="csrf-token" content="…" />
+```
+
+Customize via `Tasks.configure()`:
 
 ```js
 import { Tasks } from '@hradigital/smartforms';
 
-Tasks.STORE;        // 'store'
-Tasks.UPDATE;       // 'update'
-Tasks.UPDATE_MANY;  // 'updateMany'
-Tasks.DESTROY;      // 'destroy'
-Tasks.DESTROY_MANY; // 'destroyMany'
-Tasks.REORDER;      // 'reorder'
+Tasks.configure({
+  csrf: {
+    metaName: 'x-csrf-token',      // metadata tag name
+    headerName: 'X-Custom-Token',   // header name for fetch
+    value: 'static-token-string',   // or a function: () => token
+  }
+});
 ```
 
-Pairing with roles:
+### Response events
 
-| Role        | Recommended `data-task` | Maps to                                                        |
-| ----------- | ----------------------- | -------------------------------------------------------------- |
-| `create`    | `store`                 | Laravel `POST /resource` → `store()`. Anchors keep no task.    |
-| `update`    | `update`                | Laravel `PUT/PATCH /resource/{id}` → `update()`.               |
-| `updateall` | `updateMany`            | Bulk variant; no native Laravel route — define your own.       |
-| `delete`    | `destroy`               | Laravel `DELETE /resource/{id}` → `destroy()`.                 |
-| `deleteall` | `destroyMany`           | Bulk variant; no native Laravel route — define your own.       |
-| `reorder`   | `reorder`               | Project-defined; no Laravel equivalent.                        |
-| `cancel`    | _(no task)_             | Calls `form.reset()`.                                          |
-| `link`      | _(no task)_             | Native anchor navigation.                                      |
+After async requests, the form emits:
 
-These are defaults, not requirements — pick whatever value your controller already understands.
+- **`taskCompleted`**: `{ descriptor, status, response, body }`
+  - `body` is raw response text (never parsed JSON)
+  - Form transitions to `NORMAL` state
+  - `form.rebaseline()` is called automatically
+  
+- **`taskFailed`**: `{ descriptor, status, response, body, error }`
+  - `status` is the HTTP status code (0 for network errors)
+  - `error` is populated on fetch errors only
+  - Form state is restored to the pre-request state
+  - `body` and `response` are null on network errors
 
-### Using an anchor for `data-role="create"`
-
-A "create" action is usually a navigation to a separate page, so it makes sense to render `create` as `<a href="…">` rather than `<button>`. SmartForms still toggles the `disabled` attribute and `disabled` class when the form leaves `NORMAL`, but anchors do not honour the `disabled` attribute natively — clicks would still navigate. Pair the anchor with CSS that suppresses interaction on the disabled class:
-
-```css
-.btn.disabled { pointer-events: none; }
+```js
+form.addEventListener('taskCompleted', (e) => {
+  console.log('Status:', e.detail.status, 'Body:', e.detail.body);
+  // redirect, show toast, etc.
+});
 ```
 
-### Visibility vs. enabled state
+### Button enable/disable by state
 
 `smartforms` separates two concerns:
 
-- **What buttons exist** is the markup author's decision, driven by the *role of the form* (e.g. a single-record edit screen renders `update` + `cancel`; a list screen renders `create` + `deleteall` + `reorder`; a read-only view renders nothing). The package never adds, removes, or hides buttons that the template did not render.
-- **Whether each rendered button is enabled** is driven by the *state of the form* (`NORMAL`, `CHANGED`, `MANY`, `REORDERED`, `ILLEGAL`, `DEACTIVATED`, `SUBMITTED`). The package toggles the `disabled` attribute and the `disabled` CSS class accordingly.
+- **What buttons exist** is the markup author's decision, driven by the *role of the form* (e.g. a single-record edit screen renders `update` + `cancel`; a list screen renders `create` + `deleteall`). The package never adds, removes, or hides buttons that the template did not render.
+- **Whether each rendered button is enabled** is driven by the *state of the form* (`NORMAL`, `CHANGED`, `SELECTED`, `MANY`, `ILLEGAL`, `DEACTIVATED`, `SUBMITTED`). The package toggles the `disabled` attribute and the `disabled` CSS class accordingly.
 
 Practical rule of thumb:
 
@@ -314,18 +402,17 @@ Practical rule of thumb:
 
 Per-state enable matrix (only applies to buttons that are actually rendered):
 
-| State         | Enabled roles                                  |
-| ------------- | ---------------------------------------------- |
-| `NORMAL`      | `create`, `link`                               |
-| `CHANGED`     | `update`, `updateall`, `delete`, `deleteall`, `cancel` |
-| `SELECTED`    | same as `CHANGED`                              |
-| `MANY`        | `updateall`, `deleteall`                       |
-| `REORDERED`   | `reorder`, `link`                              |
-| `ILLEGAL`     | `cancel` only                                  |
-| `DEACTIVATED` | `cancel` only                                  |
-| `SUBMITTED`   | none (all disabled while in flight)            |
+| State         | Enabled roles                                          |
+| ------------- | ------------------------------------------------------ |
+| `NORMAL`      | `create`                                               |
+| `CHANGED`     | `update`, `delete`, `cancel`                           |
+| `SELECTED`    | `update`, `delete`, `toggle`, `cancel`                 |
+| `MANY`        | `updateall`, `deleteall`                               |
+| `ILLEGAL`     | `cancel` only                                          |
+| `DEACTIVATED` | none (all disabled)                                    |
+| `SUBMITTED`   | none (all disabled while in flight)                    |
 
-Anything not listed is disabled in that state. A `cancel` button on a freshly loaded form is disabled in `NORMAL` because there is nothing to cancel — it lights up the moment any field becomes `CHANGED`.
+Anything not listed is disabled in that state. A `cancel` button on a freshly loaded form is disabled in `NORMAL` because there is nothing to cancel — it lights up the moment any field becomes `CHANGED`. The `toggle` role is special: it is only enabled in `SELECTED` state (when exactly one row is selected in a list form).
 
 ---
 
