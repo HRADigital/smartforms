@@ -34,8 +34,10 @@ class AdminForm {
         e.preventDefault();
         e.stopPropagation();
 
-        // Sets the request task in the main Form's task field.
-        this._form.task.value = e.detail.task.trim().toLowerCase();
+        // Sets the request task in the main Form's task field, if one exists.
+        if (this._form.task && 'value' in this._form.task) {
+            this._form.task.value = e.detail.task.trim().toLowerCase();
+        }
 
         // Triggers an 'onSubmit' event in the form, before actually submitting it.
         // When submitting the form directly via Javascript, this event is not triggered.

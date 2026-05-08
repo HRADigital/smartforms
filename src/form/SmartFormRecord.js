@@ -1,5 +1,6 @@
 import State from '../constants/State';
 import TextInput from './input/TextInput';
+import EmailInput from './input/EmailInput';
 import UrlInput from './input/UrlInput';
 import NumberInput from './input/NumberInput';
 import SelectInput from './input/SelectInput';
@@ -16,6 +17,7 @@ const inputs = {
     select: SelectInput,
     textarea: TextAreaInput,
     'input.text': TextInput,
+    'input.email': EmailInput,
     'input.url': UrlInput,
     'input.number': NumberInput,
     'input.checkbox': CheckBoxInput,
@@ -103,12 +105,14 @@ class SmartFormRecord {
             }
             names.push(name);
 
+            // Skip input types that have no registered handler.
+            let inputType = this.getClassName(input);
+            if (!inputs[inputType]) return;
+
             // Collects parent Fieldset, and sets StateChange event handler configuration.
             let fieldset = input.closest('fieldset');
             fieldset.addEventListener('stateChange', (e) => this.onStateChange(e), false);
 
-            // Adds the input to the Webcontrol's list, and finishes formatting it.
-            let inputType = this.getClassName(input);
             this._inputs.push(new inputs[inputType](fieldset, state));
         });
     }
@@ -211,6 +215,23 @@ class SmartFormRecord {
         // Now we'll compare current state, with previous one.
         if (this._state !== state) {
             this._state = state;
+            this.triggerEvent();
+        }
+    }
+
+    /**
+     * Restores every tracked input to its initial value and clears change/illegal state.
+     */
+    reset() {
+        this._inputs.forEach((input) => {
+            if (typeof input.reset === 'function') {
+                input.reset();
+            }
+        });
+        this._changed = [];
+        this._illegal = [];
+        if (this._state !== State.NORMAL) {
+            this._state = State.NORMAL;
             this.triggerEvent();
         }
     }
