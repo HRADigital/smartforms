@@ -56,12 +56,18 @@ describe('Tasks.parse', () => {
 
 describe('Tasks.fillTokens', () => {
     it('substitutes {resource}, {id}, {ids}', () => {
-        const out = Tasks.fillTokens('/{resource}/{id}?ids={ids}', { resource: 'w', id: 7, ids: '1,2' });
+        const out = Tasks.fillTokens('/{resource}/{id}?ids={ids}', {
+            resource: 'w',
+            id: 7,
+            ids: '1,2',
+        });
         expect(out).toBe('/w/7?ids=1,2');
     });
 
     it('throws when a required token is missing', () => {
-        expect(() => Tasks.fillTokens('/{resource}/{id}', { resource: 'w', id: '' })).toThrow(/missing token/);
+        expect(() => Tasks.fillTokens('/{resource}/{id}', { resource: 'w', id: '' })).toThrow(
+            /missing token/,
+        );
         expect(() => Tasks.fillTokens('/{resource}', { resource: null })).toThrow(/missing token/);
     });
 });
@@ -152,7 +158,11 @@ describe('Tasks.configure', () => {
 
 describe('Tasks.csrf', () => {
     beforeEach(() => clearDom());
-    afterEach(() => Tasks.configure({ csrf: { metaName: 'csrf-token', headerName: 'X-CSRF-TOKEN', value: null } }));
+    afterEach(() =>
+        Tasks.configure({
+            csrf: { metaName: 'csrf-token', headerName: 'X-CSRF-TOKEN', value: null },
+        }),
+    );
 
     it('returns null when no token is available', () => {
         expect(Tasks.csrf()).toBeNull();

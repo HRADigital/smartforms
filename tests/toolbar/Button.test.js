@@ -126,7 +126,9 @@ describe('Button', () => {
         input.value = 'changed';
         new Button(link);
         let resetCalled = false;
-        form.addEventListener('reset', () => { resetCalled = true; });
+        form.addEventListener('reset', () => {
+            resetCalled = true;
+        });
         link.click();
         expect(resetCalled).toBe(true);
     });
@@ -138,7 +140,14 @@ describe('Button', () => {
     });
 
     it('TOGGLE role is deactivated in NORMAL/CHANGED/MANY/ILLEGAL/DEACTIVATED/SUBMITTED states', () => {
-        for (const state of [State.NORMAL, State.CHANGED, State.MANY, State.ILLEGAL, State.DEACTIVATED, State.SUBMITTED]) {
+        for (const state of [
+            State.NORMAL,
+            State.CHANGED,
+            State.MANY,
+            State.ILLEGAL,
+            State.DEACTIVATED,
+            State.SUBMITTED,
+        ]) {
             const el = makeBtn(Roles.TOGGLE);
             new Button(el).setState(state);
             expect(el.hasAttribute('disabled')).toBe(true);
@@ -183,7 +192,9 @@ describe('Button', () => {
         const b = new Button(el);
         b.setState(State.CHANGED); // CREATE is deactivated in CHANGED
         let defaultPrevented = false;
-        el.addEventListener('click', (e) => { defaultPrevented = e.defaultPrevented; });
+        el.addEventListener('click', (e) => {
+            defaultPrevented = e.defaultPrevented;
+        });
         el.click();
         expect(defaultPrevented).toBe(true);
     });
