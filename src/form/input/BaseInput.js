@@ -96,6 +96,16 @@ class BaseInput {
     }
 
     /**
+     * Restores the input's value to its initial state and re-evaluates.
+     */
+    reset() {
+        if (this._input && 'value' in this._input) {
+            this._input.value = this._initial == null ? '' : this._initial;
+            this.processChange(this._input.value);
+        }
+    }
+
+    /**
      * Marks the webcontrol as illegal.
      */
     setStateIllegal() {

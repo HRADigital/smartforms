@@ -33,6 +33,13 @@ class SmartForm {
                 throw new Error("Type of form's body not found.");
             }
         }
+
+        // Restore each input to its initial state when the form is reset.
+        form.addEventListener('reset', () => {
+            if (this._body && typeof this._body.reset === 'function') {
+                this._body.reset();
+            }
+        });
     }
 
     /**

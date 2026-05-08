@@ -56,7 +56,6 @@ class Button {
         switch (this._role) {
             case Roles.CREATE:
             case Roles.LINK:
-            case Roles.CANCEL:
                 this.activate();
                 this.visible();
                 break;
@@ -183,9 +182,22 @@ class Button {
      * @param {event} e
      */
     onClick() {
-        // If the Button is disabled, or no Task has been assigned to it,
-        // we won't respond to its clicking event.
-        if (this._task === null || this._button.hasAttribute('disabled')) {
+        // If the Button is disabled, we won't respond to its clicking event.
+        if (this._button.hasAttribute('disabled')) {
+            return;
+        }
+
+        // The CANCEL role resets the parent form to its initial values; no task is needed.
+        if (this._role === Roles.CANCEL) {
+            const form = this._button.closest('form');
+            if (form !== null) {
+                form.reset();
+            }
+            return;
+        }
+
+        // For all other roles, a task must have been assigned to the button.
+        if (this._task === null) {
             return;
         }
 
