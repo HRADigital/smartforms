@@ -10,7 +10,7 @@ function makeFixture() {
             <form id="f"></form>
             <nav class="toolbar">
                 <ul>
-                    <li><a href="#" data-role="${Roles.UPDATE}" data-task="save">save</a></li>
+                    <li><a href="#" data-role="${Roles.UPDATE}" data-task="put:/widgets/{id}">save</a></li>
                     <li><a href="#" data-role="${Roles.CANCEL}" data-task="cancel">cancel</a></li>
                 </ul>
             </nav>
@@ -50,12 +50,12 @@ describe('Toolbar', () => {
         expect(t.state()).toBe(State.SUBMITTED);
     });
 
-    it('re-emits taskExecuted when a child Button raises taskRequest', () => {
+    it('re-emits taskExecuted with descriptor when a child Button raises taskRequest', () => {
         const { nav, form } = makeFixture();
         new Toolbar(nav, form);
         const events = captureEvent(nav, 'taskExecuted');
 
-        // Activate the button first by transitioning to CHANGED so click is allowed.
+        // Activate the button by transitioning to CHANGED so click is allowed.
         form.dispatchEvent(
             new CustomEvent('formStateChange', {
                 detail: { state: State.CHANGED },
@@ -66,6 +66,23 @@ describe('Toolbar', () => {
         saveAnchor.click();
 
         expect(events.length).toBe(1);
-        expect(events[0].detail.task).toBe('save');
+        const detail = events[0].detail;
+        expect(detail.descriptor).toBeDefined();
+        expect(detail.descriptor.verb).toBe('PUT');
+        expect(detail.button).toBeDefined();
+        expect(detail.toolbar).toBeDefined();
+    });
+
+    it('emits no taskExecuted when role has no resolved task (CANCEL)', () => {
+        const { nav, form } = makeFixture();
+        new Toolbar(nav, form);
+        const events = captureEvent(nav, 'taskExecuted');
+
+        // CANCEL clicks call form.reset() and never emit taskRequest, so the
+        // Toolbar handler also never runs. This guards against accidental
+        // resolution to the default role map.
+        const cancelAnchor = nav.querySelector('a[data-role="cancel"]');
+        cancelAnchor.click();
+        expect(events.length).toBe(0);
     });
 });
