@@ -19,13 +19,17 @@ describe('TaskExecutor.execute', () => {
 
     afterEach(() => {
         if (globalThis.fetch && globalThis.fetch.mockRestore) globalThis.fetch.mockRestore();
-        Tasks.configure({ csrf: { metaName: 'csrf-token', headerName: 'X-CSRF-TOKEN', value: null } });
+        Tasks.configure({
+            csrf: { metaName: 'csrf-token', headerName: 'X-CSRF-TOKEN', value: null },
+        });
     });
 
     it('throws when the form was never registered', () => {
         const wrapper = html`<form action="/x"></form>`;
         const form = wrapper.querySelector('form');
-        expect(() => TaskExecutor.execute(form, { mode: 'sync', verb: 'GET', endpoint: '' })).toThrow(/not registered/);
+        expect(() =>
+            TaskExecutor.execute(form, { mode: 'sync', verb: 'GET', endpoint: '' }),
+        ).toThrow(/not registered/);
     });
 
     describe('sync mode', () => {
@@ -73,7 +77,11 @@ describe('TaskExecutor.execute', () => {
             const button = wrapper.querySelector('button');
             registerForm(form, fakeInstance());
             form.submit = vi.fn();
-            TaskExecutor.execute(form, { mode: 'sync', verb: 'POST', endpoint: '' }, { source: button });
+            TaskExecutor.execute(
+                form,
+                { mode: 'sync', verb: 'POST', endpoint: '' },
+                { source: button },
+            );
             expect(form.getAttribute('action')).toBe('/override');
         });
 
@@ -83,7 +91,11 @@ describe('TaskExecutor.execute', () => {
             const link = wrapper.querySelector('a');
             registerForm(form, fakeInstance({ id: 7, ids: ['a', 'b'] }));
             form.submit = vi.fn();
-            TaskExecutor.execute(form, { mode: 'sync', verb: 'POST', endpoint: '' }, { source: link });
+            TaskExecutor.execute(
+                form,
+                { mode: 'sync', verb: 'POST', endpoint: '' },
+                { source: link },
+            );
             expect(form.getAttribute('action')).toBe('/items/7/edit?ids=a,b');
         });
 
@@ -156,7 +168,9 @@ describe('TaskExecutor.execute', () => {
             const wrapper = html`<form><input name="x" value="1" /></form>`;
             const form = wrapper.querySelector('form');
             registerForm(form, fakeInstance({ id: 42 }));
-            globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200, text: async () => '' });
+            globalThis.fetch = vi
+                .fn()
+                .mockResolvedValue({ ok: true, status: 200, text: async () => '' });
 
             TaskExecutor.execute(form, { mode: 'async', verb: 'PUT', endpoint: '/{resource}' });
             await new Promise((r) => setTimeout(r, 0));
@@ -177,7 +191,9 @@ describe('TaskExecutor.execute', () => {
             Object.defineProperty(fileInput, 'files', { value: [fakeFile] });
             registerForm(form, fakeInstance());
 
-            globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200, text: async () => '' });
+            globalThis.fetch = vi
+                .fn()
+                .mockResolvedValue({ ok: true, status: 200, text: async () => '' });
             TaskExecutor.execute(form, { mode: 'async', verb: 'POST', endpoint: '/widgets' });
             await new Promise((r) => setTimeout(r, 0));
 
@@ -195,7 +211,9 @@ describe('TaskExecutor.execute', () => {
             const stateChanges = [];
             form.addEventListener('formStateChange', (e) => stateChanges.push(e.detail.state));
 
-            globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 422, text: async () => 'bad' });
+            globalThis.fetch = vi
+                .fn()
+                .mockResolvedValue({ ok: false, status: 422, text: async () => 'bad' });
 
             TaskExecutor.execute(form, { mode: 'async', verb: 'POST', endpoint: '/x' });
             await new Promise((r) => setTimeout(r, 0));
@@ -227,7 +245,9 @@ describe('TaskExecutor.execute', () => {
             const wrapper = html`<form><input name="x" value="1" /></form>`;
             const form = wrapper.querySelector('form');
             registerForm(form, fakeInstance());
-            globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200, text: async () => '' });
+            globalThis.fetch = vi
+                .fn()
+                .mockResolvedValue({ ok: true, status: 200, text: async () => '' });
 
             TaskExecutor.execute(form, { mode: 'async', verb: 'POST', endpoint: '/x' });
             await new Promise((r) => setTimeout(r, 0));
@@ -239,7 +259,9 @@ describe('TaskExecutor.execute', () => {
             const wrapper = html`<form></form>`;
             const form = wrapper.querySelector('form');
             registerForm(form, fakeInstance({ id: 5 }));
-            globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200, text: async () => '' });
+            globalThis.fetch = vi
+                .fn()
+                .mockResolvedValue({ ok: true, status: 200, text: async () => '' });
 
             TaskExecutor.execute(form, 'async:get:/{resource}/{id}');
             await new Promise((r) => setTimeout(r, 0));

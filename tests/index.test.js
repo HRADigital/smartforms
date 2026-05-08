@@ -56,7 +56,11 @@ describe('autoInit', () => {
         const wrapper = html`
             <form class="smartformlist" data-resource="widgets">
                 <table>
-                    <thead><tr><th><input type="checkbox" name="checkall-toggle" /></th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" name="checkall-toggle" /></th>
+                        </tr>
+                    </thead>
                     <tbody></tbody>
                 </table>
             </form>
@@ -85,7 +89,9 @@ describe('autoInit', () => {
         expect(tracker.getAttribute('aria-disabled')).toBe('false');
 
         const form = wrapper.querySelector('form');
-        form.dispatchEvent(new CustomEvent('formStateChange', { detail: { state: api.State.CHANGED } }));
+        form.dispatchEvent(
+            new CustomEvent('formStateChange', { detail: { state: api.State.CHANGED } }),
+        );
         expect(tracker.classList.contains('disabled')).toBe(true);
         expect(tracker.getAttribute('aria-disabled')).toBe('true');
         expect(tracker.getAttribute('tabindex')).toBe('-1');

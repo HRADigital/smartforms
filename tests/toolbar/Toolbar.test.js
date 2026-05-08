@@ -10,7 +10,11 @@ function makeFixture() {
             <form id="f"></form>
             <nav class="toolbar">
                 <ul>
-                    <li><a href="#" data-role="${Roles.UPDATE}" data-task="put:/widgets/{id}">save</a></li>
+                    <li>
+                        <a href="#" data-role="${Roles.UPDATE}" data-task="put:/widgets/{id}"
+                            >save</a
+                        >
+                    </li>
                     <li><a href="#" data-role="${Roles.CANCEL}" data-task="cancel">cancel</a></li>
                 </ul>
             </nav>

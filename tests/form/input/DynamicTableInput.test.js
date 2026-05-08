@@ -48,11 +48,15 @@ describe('DynamicTableInput', () => {
         const wrapper = html`
             <div>
                 <fieldset required recommended>
-                    <select name="picker"><option value="x">x</option></select>
+                    <select name="picker">
+                        <option value="x">x</option>
+                    </select>
                 </fieldset>
                 <table>
                     <tbody>
-                        <tr><td><input type="hidden" name="rows[]" value="1" /></td></tr>
+                        <tr>
+                            <td><input type="hidden" name="rows[]" value="1" /></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
