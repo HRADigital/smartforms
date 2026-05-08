@@ -1,12 +1,14 @@
 const Roles = Object.freeze({
-    CREATE: 'create',
-    UPDATE: 'update',
-    UPDATEALL: 'updateall',
-    DELETE: 'delete',
-    DELETEALL: 'deleteall',
-    CANCEL: 'cancel',
-    LINK: 'link',
-    REORDER: 'reorder',
+  CREATE: 'create',
+  EDIT: 'edit',
+  UPDATE: 'update',
+  UPDATEALL: 'updateall',
+  DELETE: 'delete',
+  DELETEALL: 'deleteall',
+  DESTROY: 'destroy',
+  BACK: 'back',
+  TOGGLE: 'toggle',
+  CANCEL: 'cancel',
 });
 
 export default Roles;
