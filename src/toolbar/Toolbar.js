@@ -23,7 +23,7 @@ class Toolbar {
         this._state = State.NORMAL;
 
         // Loads all Toolbar's buttons.
-        this._nav.querySelectorAll('ul li a[data-role]').forEach((button) => {
+        this._nav.querySelectorAll('[data-role]').forEach((button) => {
             // Configures the Button's Task Request event handler.
             button.addEventListener('taskRequest', (e) => this.onTaskRequest(e));
 
@@ -34,6 +34,10 @@ class Toolbar {
         // Declares state change listner.
         this._form.addEventListener('formStateChange', (e) => this.onFormStateChange(e), false);
         this._form.addEventListener('submit', () => this.onSubmit(), false);
+
+        // Applies the initial state to all buttons so server-rendered markup
+        // doesn't leak through (e.g. CANCEL active before any change).
+        this.setState(this._state);
     }
 
     /**

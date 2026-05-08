@@ -4,6 +4,7 @@ export { default as SmartFormRecord } from './form/SmartFormRecord';
 
 export { default as BaseInput } from './form/input/BaseInput';
 export { default as TextInput } from './form/input/TextInput';
+export { default as EmailInput } from './form/input/EmailInput';
 export { default as NumberInput } from './form/input/NumberInput';
 export { default as UrlInput } from './form/input/UrlInput';
 export { default as ColorInput } from './form/input/ColorInput';
@@ -23,21 +24,43 @@ export { default as AdminForm } from './toolbar/AdminForm';
 
 export { default as State } from './constants/State';
 export { default as Roles } from './constants/Roles';
+export { default as Tasks } from './constants/Tasks';
 
 import SmartForm from './form/SmartForm';
+import SmartFormList from './form/SmartFormList';
+import Toolbar from './toolbar/Toolbar';
 import AdminForm from './toolbar/AdminForm';
 
 export function autoInit({
-    formSelector = 'form.smartform',
+    formSelector = 'form.smartform, form.smartformlist',
     toolbarSelector = 'nav.toolbar',
 } = {}) {
-    const forms = [];
-    document.querySelectorAll(formSelector).forEach((form) => forms.push(new SmartForm(form)));
+    const result = [];
 
-    let admin = null;
-    const nav = document.querySelector(toolbarSelector);
-    if (nav !== null && forms.length > 0) {
-        admin = new AdminForm(forms[0], nav);
-    }
-    return { forms, admin };
+    document.querySelectorAll(formSelector).forEach((form) => {
+        const nav = form.querySelector(toolbarSelector);
+
+        try {
+            const isList = form.classList.contains('smartformlist') && !form.classList.contains('smartform');
+            const formInstance = isList ? new SmartFormList(form) : new SmartForm(form);
+
+            let admin = null;
+            if (nav !== null) {
+                const toolbar = new Toolbar(nav, form);
+                admin = new AdminForm(form, toolbar);
+            }
+
+            result.push({ form: formInstance, admin });
+        } catch (e) {
+            console.error('[SmartForms] autoInit failed for form', form.id, e);
+        }
+    });
+
+    return result;
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => autoInit());
+} else {
+    autoInit();
 }
