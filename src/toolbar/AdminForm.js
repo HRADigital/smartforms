@@ -1,4 +1,4 @@
-import Toolbar from './Toolbar';
+import TaskExecutor from '../http/TaskExecutor.js';
 
 /**
  * Main form's handling class.
@@ -10,44 +10,27 @@ class AdminForm {
      * Initializes the Form's handling instance.
      *
      * @param {object}  form
-     * @param {Toolbar} toolbar
      */
-    constructor(form, toolbar) {
+    constructor(form) {
         // Sets the form's initial state.
         this._form = form;
 
-        // Configures the Toolbar, if one was provided.
+        // Finds and configures the Toolbar if one exists in the form.
+        const toolbar = form.querySelector('nav.toolbar');
         if (toolbar !== null) {
-            toolbar
-                .element()
-                .addEventListener('taskExecuted', (e) => this.onTaskExecuted(e), false);
+            toolbar.addEventListener('taskExecuted', (e) => this.onTaskExecuted(e), false);
         }
     }
 
     /**
      * Event handler for when a Button's task is requested.
      *
-     * @param {Event} e - New Row's state Event.
+     * @param {Event} e - Task executed event.
      */
     onTaskExecuted(e) {
-        // Prevents Form's default behaviour and propagation.
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Sets the request task in the main Form's task field, if one exists.
-        if (this._form.task && 'value' in this._form.task) {
-            this._form.task.value = e.detail.task.trim().toLowerCase();
-        }
-
-        // Triggers an 'onSubmit' event in the form, before actually submitting it.
-        // When submitting the form directly via Javascript, this event is not triggered.
-        this._form.dispatchEvent(
-            new Event('submit', {
-                bubbles: true,
-                cancelable: true,
-            }),
-        );
-        this._form.submit();
+        const { descriptor, button } = e.detail;
+        const source = button && typeof button.element === 'function' ? button.element() : null;
+        TaskExecutor.execute(this._form, descriptor, { source });
     }
 }
 
