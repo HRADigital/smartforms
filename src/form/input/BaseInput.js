@@ -101,7 +101,7 @@ class BaseInput {
      */
     reset() {
         if (this._input && 'value' in this._input) {
-            this._input.value = this._initial == null ? '' : this._initial;
+            this._input.value = this._initial ?? '';
             this.processChange(this._input.value);
         }
     }
@@ -166,7 +166,7 @@ class BaseInput {
      */
     triggerEvent(state) {
         // Configures Custom Event for State change.
-        let event = new CustomEvent('stateChange', {
+        const event = new CustomEvent('stateChange', {
             bubbles: true,
             cancelable: false,
             detail: {

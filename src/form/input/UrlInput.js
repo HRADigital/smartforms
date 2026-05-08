@@ -1,4 +1,3 @@
-import State from '../../constants/State';
 import TextInput from './TextInput';
 
 /**
