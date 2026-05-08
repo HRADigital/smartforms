@@ -44,6 +44,50 @@ describe('DynamicTableInput', () => {
         expect(dt.hasChanged()).toBe(true);
     });
 
+    it('isRequired and isRecommended reflect fieldset attributes', () => {
+        const wrapper = html`
+            <div>
+                <fieldset required recommended>
+                    <select name="picker"><option value="x">x</option></select>
+                </fieldset>
+                <table>
+                    <tbody>
+                        <tr><td><input type="hidden" name="rows[]" value="1" /></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+        const dt = new DynamicTableInput(wrapper.querySelector('table'), State.NORMAL);
+        expect(dt.isRequired()).toBe(true);
+        expect(dt.isRecommended()).toBe(true);
+    });
+
+    it('reflects unchanged fieldset has no marker classes', () => {
+        const wrapper = html`${markup}`;
+        const dt = new DynamicTableInput(wrapper.querySelector('table'), State.NORMAL);
+        expect(dt._fieldset.classList.contains('invalid')).toBe(false);
+        expect(dt._fieldset.classList.contains('changed')).toBe(false);
+    });
+
+    it('emits stateChange and adds "changed" class when DOM mutates', () => {
+        const wrapper = html`${markup}`;
+        const table = wrapper.querySelector('table');
+        const dt = new DynamicTableInput(table, State.NORMAL);
+        const events = [];
+        table.addEventListener('stateChange', (e) => events.push(e));
+
+        // Add a row, then trigger the deprecated mutation event the source listens for.
+        const tbody = table.querySelector('tbody');
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td><input type="hidden" name="rows[]" value="3" /></td>';
+        tbody.appendChild(tr);
+        tbody.dispatchEvent(new Event('DOMSubtreeModified'));
+
+        expect(events.length).toBe(1);
+        expect(events[0].detail.state).toBe(State.CHANGED);
+        expect(dt._fieldset.classList.contains('changed')).toBe(true);
+    });
+
     it('isIllegal when required and empty', () => {
         const empty = html`
             <div>
