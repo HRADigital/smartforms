@@ -57,4 +57,43 @@ describe('SmartFormList', () => {
         wrapper.querySelectorAll('tbody input').forEach((cb) => expect(cb.checked).toBe(true));
         expect(list.state()).toBe(State.MANY);
     });
+
+    it('selectedIds() returns the values of checked rows', () => {
+        const wrapper = html`${markup}`;
+        const list = new SmartFormList(wrapper.querySelector('.smartformlist'), State.NORMAL);
+        const cbs = wrapper.querySelectorAll('tbody input');
+        cbs[0].checked = true;
+        cbs[2].checked = true;
+        cbs[0].dispatchEvent(new Event('change', { bubbles: true }));
+        cbs[2].dispatchEvent(new Event('change', { bubbles: true }));
+        expect(list.selectedIds().sort()).toEqual(['1', '3']);
+    });
+
+    it('id() returns the single checked id, or null otherwise', () => {
+        const wrapper = html`${markup}`;
+        const list = new SmartFormList(wrapper.querySelector('.smartformlist'), State.NORMAL);
+        expect(list.id()).toBeNull();
+        const cb = wrapper.querySelectorAll('tbody input')[1];
+        cb.checked = true;
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
+        expect(list.id()).toBe('2');
+        // Add a second selection — id() should drop back to null.
+        const cb2 = wrapper.querySelectorAll('tbody input')[0];
+        cb2.checked = true;
+        cb2.dispatchEvent(new Event('change', { bubbles: true }));
+        expect(list.id()).toBeNull();
+    });
+
+    it('rebaseline() clears selection and returns state to NORMAL', () => {
+        const wrapper = html`${markup}`;
+        const list = new SmartFormList(wrapper.querySelector('.smartformlist'), State.NORMAL);
+        const cbs = wrapper.querySelectorAll('tbody input');
+        cbs[0].checked = true;
+        cbs[0].dispatchEvent(new Event('change', { bubbles: true }));
+        expect(list.state()).toBe(State.SELECTED);
+        list.rebaseline();
+        expect(list.state()).toBe(State.NORMAL);
+        wrapper.querySelectorAll('tbody input').forEach((cb) => expect(cb.checked).toBe(false));
+        expect(wrapper.querySelector('thead input').checked).toBe(false);
+    });
 });

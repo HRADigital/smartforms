@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import NumberInput from '../../../src/form/input/NumberInput.js';
 import State from '../../../src/constants/State.js';
-import { fieldset, clearDom, fireChange } from '../../_helpers/dom.js';
+import { fieldset, clearDom, fireChange, fireKeyup, fireClick } from '../../_helpers/dom.js';
 
 describe('NumberInput', () => {
     beforeEach(() => clearDom());
@@ -38,5 +38,20 @@ describe('NumberInput', () => {
         const n = new NumberInput(fs, State.NORMAL);
         fireChange(fs.querySelector('input'), '');
         expect(n.isIllegal()).toBe(true);
+    });
+
+    it('responds to keyup, click, and oninput events', () => {
+        const fs = fieldset('<input type="number" name="n" value="1" min="0" max="10" />');
+        const n = new NumberInput(fs, State.NORMAL);
+        const input = fs.querySelector('input');
+        fireKeyup(input, '99');
+        expect(n.isIllegal()).toBe(true);
+        fireChange(input, '5');
+        expect(n.isIllegal()).toBe(false);
+        fireClick(input);
+        expect(n.isIllegal()).toBe(false);
+        // oninput passthrough — dispatched manually since helpers don't cover it
+        input.dispatchEvent(new Event('oninput', { bubbles: true }));
+        expect(n.isIllegal()).toBe(false);
     });
 });

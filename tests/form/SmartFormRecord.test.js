@@ -57,4 +57,45 @@ describe('SmartFormRecord', () => {
         inp.dispatchEvent(new Event('keyup', { bubbles: true }));
         expect(r.state()).toBe(State.NORMAL);
     });
+
+    it('reset() restores inputs and clears state back to NORMAL', () => {
+        const wrapper = html`
+            <div class="smartformrecord">
+                <fieldset><input type="text" name="title" value="hello" /></fieldset>
+            </div>
+        `;
+        const r = new SmartFormRecord(wrapper.querySelector('.smartformrecord'), State.NORMAL);
+        const inp = wrapper.querySelector('input');
+        inp.value = 'world';
+        inp.dispatchEvent(new Event('keyup', { bubbles: true }));
+        expect(r.state()).toBe(State.CHANGED);
+        r.reset();
+        expect(r.state()).toBe(State.NORMAL);
+        expect(inp.value).toBe('hello');
+    });
+
+    it('rebaseline() captures current values as the new baseline', () => {
+        const wrapper = html`
+            <div class="smartformrecord">
+                <fieldset><input type="text" name="title" value="hello" /></fieldset>
+            </div>
+        `;
+        const r = new SmartFormRecord(wrapper.querySelector('.smartformrecord'), State.NORMAL);
+        const inp = wrapper.querySelector('input');
+        inp.value = 'world';
+        inp.dispatchEvent(new Event('keyup', { bubbles: true }));
+        r.rebaseline();
+        expect(r.state()).toBe(State.NORMAL);
+    });
+
+    it('skips inputs whose type has no registered handler', () => {
+        const wrapper = html`
+            <div class="smartformrecord">
+                <fieldset><input type="hidden" name="weird" value="x" /></fieldset>
+                <fieldset><input type="text" name="title" value="hello" /></fieldset>
+            </div>
+        `;
+        const r = new SmartFormRecord(wrapper.querySelector('.smartformrecord'), State.NORMAL);
+        expect(r.state()).toBe(State.NORMAL);
+    });
 });
