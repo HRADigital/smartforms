@@ -1,4 +1,5 @@
 import State from '../../constants/State';
+import { log } from '../../logger.js';
 
 /**
  * Form List's Row handling class.
@@ -83,6 +84,7 @@ class Row {
         });
 
         // Triggers Custom Event.
+        log('[SmartForms] row stateChange', { state, instance: this });
         this._element.dispatchEvent(event);
     }
 }
