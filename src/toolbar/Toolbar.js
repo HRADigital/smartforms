@@ -1,5 +1,7 @@
 import Button from './Button';
 import State from '../constants/State';
+import Tasks from '../constants/Tasks';
+import { log, warn } from '../logger.js';
 
 /**
  * Main form's Toolbar handling class.
@@ -64,6 +66,8 @@ class Toolbar {
      * @param {State} state - New State value to be set on the Toolbar.
      */
     setState(state) {
+        log('[SmartForms] toolbar setState', { from: this._state, to: state, buttons: this._buttons.length });
+
         // Propagates the supplied State to all buttons.
         this._buttons.forEach((button) => {
             button.setState(state);
@@ -96,25 +100,21 @@ class Toolbar {
     /**
      * Event handler for when a Button's task is requested.
      *
-     * @param {Event} e - New Row's state Event.
+     * @param {Event} e - Task request event.
      */
     onTaskRequest(e) {
-        // Prevents Toolbar's default behaviour and propagation.
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Configures Custom Event for State change.
-        let event = new CustomEvent('taskExecuted', {
-            bubbles: false,
+        const { role, dataTaskAttr, button } = e.detail;
+        const descriptor = Tasks.resolve(role, dataTaskAttr);
+        if (!descriptor) {
+            warn(`[SmartForms] no Task resolved for role "${role}"`);
+            return;
+        }
+        const event = new CustomEvent('taskExecuted', {
+            bubbles: true,
             cancelable: false,
-            detail: {
-                task: e.detail.task,
-                button: e.detail.button,
-                toolbar: this,
-            },
+            detail: { descriptor, button, toolbar: this },
         });
-
-        // Triggers Custom Event.
+        log('[SmartForms] toolbar taskExecuted', { role, dataTaskAttr, descriptor });
         this._nav.dispatchEvent(event);
     }
 }

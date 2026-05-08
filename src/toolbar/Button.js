@@ -1,5 +1,6 @@
 import State from '../constants/State';
 import Roles from '../constants/Roles';
+import { log } from '../logger.js';
 
 /**
  * Toolbar's Button handling class.
@@ -16,21 +17,30 @@ class Button {
         // Sets up initial object's state.
         this._button = button;
         this._role = this._button.getAttribute('data-role');
-        this._task = this._button.getAttribute('data-task');
-        this._actions = [];
+        this._actions = {};
 
         // Configures the DOM element.
-        this._button.addEventListener('click', () => this.onClick());
+        this._button.addEventListener('click', (e) => this.onClick(e));
 
         // Declares State related actions.
-        this._actions[State.DEACTIVATED.toString()] = this.setStateDeactivated.bind(this);
-        this._actions[State.SUBMITTED.toString()] = this.setStateSubmitted.bind(this);
-        this._actions[State.ILLEGAL.toString()] = this.setStateIllegal.bind(this);
-        this._actions[State.CHANGED.toString()] = this.setStateChanged.bind(this);
-        this._actions[State.SELECTED.toString()] = this.setStateChanged.bind(this);
-        this._actions[State.MANY.toString()] = this.setStateMany.bind(this);
-        this._actions[State.REORDERED.toString()] = this.setStateReordered.bind(this);
-        this._actions[State.NORMAL.toString()] = this.setStateNormal.bind(this);
+        this._actions = {
+            [State.NORMAL]:      this.setStateNormal.bind(this),
+            [State.CHANGED]:     this.setStateChanged.bind(this),
+            [State.SELECTED]:    this.setStateSelected.bind(this),
+            [State.MANY]:        this.setStateMany.bind(this),
+            [State.ILLEGAL]:     this.setStateIllegal.bind(this),
+            [State.DEACTIVATED]: this.setStateDeactivated.bind(this),
+            [State.SUBMITTED]:   this.setStateSubmitted.bind(this),
+        };
+    }
+
+    /**
+     * Returns the underlying DOM element.
+     *
+     * @returns {HTMLElement}
+     */
+    element() {
+        return this._button;
     }
 
     /**
@@ -46,7 +56,13 @@ class Button {
      * Changes the button to disabled, independent of its assigned role.
      */
     setStateSubmitted() {
-        this.deactivate();
+        if (this._role === Roles.TOGGLE) {
+            this.deactivate();
+            this.visible();
+        } else {
+            this.deactivate();
+            this.visible();
+        }
     }
 
     /**
@@ -55,12 +71,14 @@ class Button {
     setStateNormal() {
         switch (this._role) {
             case Roles.CREATE:
-            case Roles.LINK:
+            case Roles.DESTROY:
+            case Roles.BACK:
                 this.activate();
                 this.visible();
                 break;
-            case Roles.REORDER:
-                this.hidden();
+            case Roles.TOGGLE:
+                this.deactivate();
+                this.visible();
                 break;
             default:
                 this.deactivate();
@@ -74,6 +92,7 @@ class Button {
      */
     setStateChanged() {
         switch (this._role) {
+            case Roles.EDIT:
             case Roles.UPDATE:
             case Roles.UPDATEALL:
             case Roles.DELETE:
@@ -82,13 +101,42 @@ class Button {
                 this.activate();
                 this.visible();
                 break;
-            case Roles.REORDER:
-                this.hidden();
+            case Roles.TOGGLE:
+                this.deactivate();
+                this.visible();
                 break;
             default:
                 this.deactivate();
                 this.visible();
                 break;
+        }
+    }
+
+    /**
+     * Changes the button's state, when the form has a SELECTED state.
+     */
+    setStateSelected() {
+        switch (this._role) {
+            case Roles.EDIT:
+            case Roles.UPDATE:
+            case Roles.DELETE:
+            case Roles.CANCEL:
+                this.activate();
+                this.visible();
+                break;
+            case Roles.TOGGLE:
+                this.activate();
+                this.visible();
+                break;
+            case Roles.CREATE:
+            case Roles.UPDATEALL:
+            case Roles.DELETEALL:
+                this.deactivate();
+                this.visible();
+                break;
+            default:
+                this.deactivate();
+                this.visible();
         }
     }
 
@@ -102,28 +150,13 @@ class Button {
                 this.activate();
                 this.visible();
                 break;
-            case Roles.REORDER:
-                this.hidden();
+            case Roles.TOGGLE:
+                this.deactivate();
+                this.visible();
                 break;
             default:
                 this.deactivate();
                 this.visible();
-                break;
-        }
-    }
-
-    /**
-     * Changes the button's state, when the form has a REORDER state.
-     */
-    setStateReordered() {
-        switch (this._role) {
-            case Roles.REORDER:
-            case Roles.LINK:
-                this.activate();
-                this.visible();
-                break;
-            default:
-                this.hidden();
                 break;
         }
     }
@@ -134,8 +167,13 @@ class Button {
     setStateIllegal() {
         if (this._role === Roles.CANCEL) {
             this.activate();
+            this.visible();
+        } else if (this._role === Roles.TOGGLE) {
+            this.deactivate();
+            this.visible();
         } else {
             this.deactivate();
+            this.visible();
         }
     }
 
@@ -143,7 +181,13 @@ class Button {
      * Changes the button's state, when the form has an DEACTIVATED state.
      */
     setStateDeactivated() {
-        this.setStateIllegal();
+        if (this._role === Roles.TOGGLE) {
+            this.deactivate();
+            this.visible();
+        } else {
+            this.deactivate();
+            this.visible();
+        }
     }
 
     /**
@@ -181,13 +225,23 @@ class Button {
      *
      * @param {event} e
      */
-    onClick() {
-        // If the Button is disabled, we won't respond to its clicking event.
-        if (this._button.hasAttribute('disabled')) {
-            return;
+    onClick(e) {
+        // CREATE / BACK are pure navigations, not form tasks. If the element
+        // is an anchor with an href, let the browser follow it — unless the
+        // button is currently deactivated (e.g. BACK while form is dirty).
+        if (this._role === Roles.CREATE || this._role === Roles.BACK) {
+            const isAnchor = this._button.tagName === 'A';
+            const href = this._button.getAttribute('href');
+            const isDisabled = this._button.classList.contains('disabled');
+            if (isAnchor && typeof href === 'string' && href.length > 0) {
+                if (isDisabled) {
+                    e.preventDefault();
+                    return;
+                }
+                return;
+            }
         }
-
-        // The CANCEL role resets the parent form to its initial values; no task is needed.
+        e.preventDefault();
         if (this._role === Roles.CANCEL) {
             const form = this._button.closest('form');
             if (form !== null) {
@@ -195,28 +249,21 @@ class Button {
             }
             return;
         }
-
-        // For all other roles, a task must have been assigned to the button.
-        if (this._task === null) {
+        if (this._button.disabled || this._button.classList.contains('disabled')) {
             return;
         }
-
-        // We'll only process the click event if the button's role is different from Roles.LINK.
-        // If Roles.LINK, the button performs as a normal 'Anchor' element.
-        if (this._role !== Roles.LINK) {
-            // Otherwise, we'll configure a Custom Event for a Task's execution request.
-            let event = new CustomEvent('taskRequest', {
-                bubbles: false,
-                cancelable: false,
-                detail: {
-                    task: this._task,
-                    button: this,
-                },
-            });
-
-            // Triggers Custom Event.
-            this._button.dispatchEvent(event);
-        }
+        const dataTaskAttr = this._button.getAttribute('data-task');
+        const event = new CustomEvent('taskRequest', {
+            bubbles: true,
+            cancelable: false,
+            detail: {
+                role: this._role,
+                dataTaskAttr,
+                button: this,
+            },
+        });
+        log('[SmartForms] button taskRequest', { role: this._role, dataTaskAttr, button: this });
+        this._button.dispatchEvent(event);
     }
 }
 
