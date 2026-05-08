@@ -1,4 +1,4 @@
-import State from '../../constants/State';
+import State from '../../constants/State.js';
 import { log } from '../../logger.js';
 
 /**
@@ -176,7 +176,11 @@ class BaseInput {
         });
 
         // Triggers Custom Event.
-        log('[SmartForms] input stateChange', { name: this.name?.() ?? null, state, instance: this });
+        log('[SmartForms] input stateChange', {
+            name: this.name?.() ?? null,
+            state,
+            instance: this,
+        });
         this._fieldset.dispatchEvent(event);
     }
 

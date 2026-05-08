@@ -1,4 +1,4 @@
-import TextInput from './TextInput';
+import TextInput from './TextInput.js';
 
 /**
  * Form DateTimeInput Input handling class.

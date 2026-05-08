@@ -1,4 +1,4 @@
-import BaseInput from './BaseInput';
+import BaseInput from './BaseInput.js';
 
 /**
  * Form Checkbox handling class.

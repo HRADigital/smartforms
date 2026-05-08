@@ -13,95 +13,96 @@ import { toggleDebug } from './logger.js';
 const formRegistry = new WeakMap();
 
 function registerForm(form, instance) {
-  formRegistry.set(form, instance);
+    formRegistry.set(form, instance);
 }
 
 function getForm(form) {
-  return formRegistry.get(form) || null;
+    return formRegistry.get(form) || null;
 }
 
 function autoInit(root = document) {
-  const forms = root.querySelectorAll('form.smartform, form.smartformlist');
-  forms.forEach((form) => {
-    const isList = form.classList.contains('smartformlist') && !form.classList.contains('smartform');
-    const instance = isList ? new SmartFormList(form, State.NORMAL) : new SmartForm(form);
-    registerForm(form, instance);
+    const forms = root.querySelectorAll('form.smartform, form.smartformlist');
+    forms.forEach((form) => {
+        const isList =
+            form.classList.contains('smartformlist') && !form.classList.contains('smartform');
+        const instance = isList ? new SmartFormList(form, State.NORMAL) : new SmartForm(form);
+        registerForm(form, instance);
 
-    const nav = form.querySelector('nav.toolbar');
-    if (nav !== null) {
-      new Toolbar(nav, form);
-    }
-
-    new AdminForm(form);
-  });
-
-  // Wire generic state trackers: any element with `data-track-form="<formId>"`
-  // mirrors that form's state via the `disabled` class. Active only on NORMAL.
-  const trackers = root.querySelectorAll('[data-track-form]');
-  trackers.forEach((el) => {
-    const formId = el.getAttribute('data-track-form');
-    const form = formId ? document.getElementById(formId) : null;
-    if (!form) return;
-
-    const sync = (state) => {
-      const isNormal = state === State.NORMAL;
-      el.classList.toggle('disabled', !isNormal);
-      el.setAttribute('aria-disabled', isNormal ? 'false' : 'true');
-      if (el.tagName === 'A') {
-        if (isNormal) {
-          el.removeAttribute('tabindex');
-        } else {
-          el.setAttribute('tabindex', '-1');
+        const nav = form.querySelector('nav.toolbar');
+        if (nav !== null) {
+            new Toolbar(nav, form);
         }
-      }
-    };
-    sync(State.NORMAL);
-    form.addEventListener('formStateChange', (e) => {
-      if (e && e.detail && typeof e.detail.state !== 'undefined') {
-        sync(e.detail.state);
-      }
+
+        new AdminForm(form);
     });
-  });
+
+    // Wire generic state trackers: any element with `data-track-form="<formId>"`
+    // mirrors that form's state via the `disabled` class. Active only on NORMAL.
+    const trackers = root.querySelectorAll('[data-track-form]');
+    trackers.forEach((el) => {
+        const formId = el.getAttribute('data-track-form');
+        const form = formId ? document.getElementById(formId) : null;
+        if (!form) return;
+
+        const sync = (state) => {
+            const isNormal = state === State.NORMAL;
+            el.classList.toggle('disabled', !isNormal);
+            el.setAttribute('aria-disabled', isNormal ? 'false' : 'true');
+            if (el.tagName === 'A') {
+                if (isNormal) {
+                    el.removeAttribute('tabindex');
+                } else {
+                    el.setAttribute('tabindex', '-1');
+                }
+            }
+        };
+        sync(State.NORMAL);
+        form.addEventListener('formStateChange', (e) => {
+            if (e && e.detail && typeof e.detail.state !== 'undefined') {
+                sync(e.detail.state);
+            }
+        });
+    });
 }
 
 if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => autoInit());
-  } else {
-    autoInit();
-  }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => autoInit());
+    } else {
+        autoInit();
+    }
 }
 
 export {
-  SmartForm,
-  SmartFormList,
-  SmartFormRecord,
-  AdminForm,
-  Toolbar,
-  Button,
-  Roles,
-  State,
-  Tasks,
-  TaskExecutor,
-  autoInit,
-  registerForm,
-  getForm,
-  toggleDebug,
+    SmartForm,
+    SmartFormList,
+    SmartFormRecord,
+    AdminForm,
+    Toolbar,
+    Button,
+    Roles,
+    State,
+    Tasks,
+    TaskExecutor,
+    autoInit,
+    registerForm,
+    getForm,
+    toggleDebug,
 };
 
 export default {
-  SmartForm,
-  SmartFormList,
-  SmartFormRecord,
-  AdminForm,
-  Toolbar,
-  Button,
-  Roles,
-  State,
-  Tasks,
-  TaskExecutor,
-  autoInit,
-  registerForm,
-  getForm,
-  toggleDebug,
+    SmartForm,
+    SmartFormList,
+    SmartFormRecord,
+    AdminForm,
+    Toolbar,
+    Button,
+    Roles,
+    State,
+    Tasks,
+    TaskExecutor,
+    autoInit,
+    registerForm,
+    getForm,
+    toggleDebug,
 };
