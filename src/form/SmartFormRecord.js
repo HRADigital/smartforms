@@ -18,6 +18,7 @@ const inputs = {
     select: SelectInput,
     textarea: TextAreaInput,
     'input.text': TextInput,
+    'input.password': TextInput,
     'input.email': EmailInput,
     'input.url': UrlInput,
     'input.number': NumberInput,
