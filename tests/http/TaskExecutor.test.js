@@ -202,6 +202,59 @@ describe('TaskExecutor.execute', () => {
             expect(init.headers['Content-Type']).toBeUndefined();
         });
 
+        it('omits unchecked checkboxes and blanks empty file inputs in the JSON body', async () => {
+            const wrapper = html`
+                <form>
+                    <input name="title" value="Hi" />
+                    <input type="checkbox" name="agree" value="yes" />
+                    <input type="file" name="doc" />
+                </form>
+            `;
+            const form = wrapper.querySelector('form');
+            registerForm(form, fakeInstance());
+            globalThis.fetch = vi
+                .fn()
+                .mockResolvedValue({ ok: true, status: 200, text: async () => '' });
+
+            TaskExecutor.execute(form, { mode: 'async', verb: 'POST', endpoint: '/widgets' });
+            await new Promise((r) => setTimeout(r, 0));
+
+            const init = globalThis.fetch.mock.calls[0][1];
+            expect(init.headers['Content-Type']).toBe('application/json');
+            const body = JSON.parse(init.body);
+            expect(body.title).toBe('Hi');
+            expect(body.agree).toBeUndefined();
+            expect(body.doc).toBe('');
+        });
+
+        it('keeps checked checkboxes and drops unchecked ones in the FormData body', async () => {
+            const wrapper = html`
+                <form>
+                    <input name="title" value="Hi" />
+                    <input type="checkbox" name="agree" value="yes" checked />
+                    <input type="checkbox" name="news" value="no" />
+                    <input type="file" name="upload" />
+                </form>
+            `;
+            const form = wrapper.querySelector('form');
+            const fileInput = wrapper.querySelector('input[type=file]');
+            const fakeFile = new File(['data'], 'a.txt', { type: 'text/plain' });
+            Object.defineProperty(fileInput, 'files', { value: [fakeFile] });
+            registerForm(form, fakeInstance());
+            globalThis.fetch = vi
+                .fn()
+                .mockResolvedValue({ ok: true, status: 200, text: async () => '' });
+
+            TaskExecutor.execute(form, { mode: 'async', verb: 'POST', endpoint: '/widgets' });
+            await new Promise((r) => setTimeout(r, 0));
+
+            const init = globalThis.fetch.mock.calls[0][1];
+            expect(init.body).toBeInstanceOf(FormData);
+            expect(init.body.get('agree')).toBe('yes');
+            expect(init.body.get('news')).toBeNull();
+            expect(init.body.get('upload')).toBeInstanceOf(File);
+        });
+
         it('dispatches taskFailed on non-ok response and reverts state', async () => {
             const wrapper = html`<form><input name="x" value="1" /></form>`;
             const form = wrapper.querySelector('form');

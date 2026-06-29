@@ -71,6 +71,25 @@ describe('autoInit', () => {
         expect(instance).toBeInstanceOf(api.SmartFormList);
     });
 
+    it('wires a nav.toolbar found inside a form', () => {
+        const wrapper = html`
+            <form class="smartform" data-resource="widgets">
+                <div class="smartformrecord">
+                    <fieldset><input type="text" name="x" value="hi" /></fieldset>
+                </div>
+                <nav class="toolbar">
+                    <button type="button" data-role="update">Save</button>
+                    <button type="button" data-role="cancel">Cancel</button>
+                </nav>
+            </form>
+        `;
+        api.autoInit();
+        // On the initial NORMAL state the Toolbar deactivates update/cancel.
+        const update = wrapper.querySelector('[data-role="update"]');
+        expect(update.hasAttribute('disabled')).toBe(true);
+        expect(update.classList.contains('disabled')).toBe(true);
+    });
+
     it('wires data-track-form elements to mirror form state', () => {
         const wrapper = html`
             <div>

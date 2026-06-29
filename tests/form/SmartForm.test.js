@@ -133,6 +133,34 @@ describe('SmartForm', () => {
         expect(Array.isArray(ids)).toBe(true);
     });
 
+    it('id() delegates to the SmartFormList body for list forms', () => {
+        const wrapper = html`
+            <form class="smartformlist">
+                <div class="smartformlist">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" name="checkall-toggle" /></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" name="cid[]" value="9" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        `;
+        const formEl = wrapper.querySelector('form');
+        const f = new SmartForm(formEl);
+        expect(f.id()).toBeNull();
+        const cb = formEl.querySelector('tbody input');
+        cb.checked = true;
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
+        expect(f.id()).toBe('9');
+    });
+
     it('rebaseline() delegates to the body when supported', () => {
         const wrapper = html`
             <form class="smartform">

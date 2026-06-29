@@ -59,4 +59,30 @@ describe('TextInput', () => {
         fireKeyup(inp, '1234567890');
         expect(t._guide.className).toBe('warning');
     });
+
+    it('processGuide clears the warning class below the threshold', () => {
+        const fs = fieldset('<input name="x" value="" data-limit="10" data-guide="1" />');
+        const t = new TextInput(fs, State.NORMAL);
+        const inp = fs.querySelector('input');
+        fireKeyup(inp, '1234567890');
+        expect(t._guide.className).toBe('warning');
+        fireKeyup(inp, '12');
+        expect(t._guide.className).toBe('');
+    });
+
+    it('onKeyPress blocks further input once the limit is reached', () => {
+        const fs = fieldset('<input name="x" value="1234567890" data-limit="10" />');
+        new TextInput(fs, State.NORMAL);
+        const ev = new KeyboardEvent('keypress', { bubbles: true, cancelable: true });
+        fs.querySelector('input').dispatchEvent(ev);
+        expect(ev.defaultPrevented).toBe(true);
+    });
+
+    it('onKeyPress allows input below the limit', () => {
+        const fs = fieldset('<input name="x" value="12" data-limit="10" />');
+        new TextInput(fs, State.NORMAL);
+        const ev = new KeyboardEvent('keypress', { bubbles: true, cancelable: true });
+        fs.querySelector('input').dispatchEvent(ev);
+        expect(ev.defaultPrevented).toBe(false);
+    });
 });
