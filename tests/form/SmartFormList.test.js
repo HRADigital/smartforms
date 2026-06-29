@@ -96,4 +96,40 @@ describe('SmartFormList', () => {
         wrapper.querySelectorAll('tbody input').forEach((cb) => expect(cb.checked).toBe(false));
         expect(wrapper.querySelector('thead input').checked).toBe(false);
     });
+
+    it('drops a row back out of the changed set when it is unchecked', () => {
+        const wrapper = html`${markup}`;
+        const list = new SmartFormList(wrapper.querySelector('.smartformlist'), State.NORMAL);
+        const cb = wrapper.querySelectorAll('tbody input')[0];
+        cb.checked = true;
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
+        expect(list.changedCount()).toBe(1);
+        cb.checked = false;
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
+        expect(list.changedCount()).toBe(0);
+        expect(list.state()).toBe(State.NORMAL);
+    });
+
+    it('resource() returns the data-resource attribute, or null when absent', () => {
+        const withResource = html`<div class="smartformlist" data-resource="widgets">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" name="checkall-toggle" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" name="cid[]" value="1" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>`;
+        const list = new SmartFormList(withResource.querySelector('.smartformlist'), State.NORMAL);
+        expect(list.resource()).toBe('widgets');
+
+        const without = html`${markup}`;
+        const bare = new SmartFormList(without.querySelector('.smartformlist'), State.NORMAL);
+        expect(bare.resource()).toBeNull();
+    });
 });

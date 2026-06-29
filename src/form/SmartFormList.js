@@ -142,6 +142,15 @@ class SmartFormList {
     }
 
     /**
+     * Returns the list's resource name.
+     *
+     * @returns {string|null}
+     */
+    resource() {
+        return this._element.getAttribute('data-resource');
+    }
+
+    /**
      * Returns the IDs of selected rows.
      *
      * @returns {array}
