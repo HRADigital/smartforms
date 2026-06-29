@@ -1,11 +1,5 @@
 export type FormState =
-    | 'normal'
-    | 'changed'
-    | 'selected'
-    | 'many'
-    | 'submitted'
-    | 'deactivated'
-    | 'illegal';
+    'normal' | 'changed' | 'selected' | 'many' | 'submitted' | 'deactivated' | 'illegal';
 
 export const State: {
     readonly NORMAL: FormState;
