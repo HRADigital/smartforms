@@ -1,0 +1,15 @@
+#!/bin/sh
+# Fast gate at commit time: ensure nothing is committed that CI would reject
+# for style/lint reasons. The unformatted-file CI failure was a *committed*
+# file, so this is the layer that actually prevents it. Heavier checks
+# (tests, build) run at push time via the pre-push hook.
+# Bypass with: git commit --no-verify
+set -e
+
+echo "pre-commit: checking formatting (prettier --check)..."
+npm run format:check
+
+echo "pre-commit: linting (eslint)..."
+npm run lint
+
+echo "pre-commit: ok."
