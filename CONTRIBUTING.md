@@ -5,7 +5,7 @@ Thanks for your interest in improving `smartforms`!
 ## Local setup
 
 ```bash
-nvm use            # picks Node version from .nvmrc
+nvm use 20         # or any Node >= 20 (see `engines` in package.json)
 npm ci
 npm run lint
 npm test

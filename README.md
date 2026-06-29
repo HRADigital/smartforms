@@ -7,6 +7,8 @@
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@hradigital/smartforms)](https://bundlephobia.com/package/@hradigital/smartforms)
 [![license](https://img.shields.io/npm/l/@hradigital/smartforms.svg)](./LICENSE)
 
+Server-rendered apps still ship plain HTML forms, but users expect client-side behaviour: fields that visibly react the moment their value changes, Save / Delete buttons that enable only when there is actually something to save or delete, inline validation feedback, and toolbar actions wired to the right HTTP verb and endpoint. Reaching for React or Vue just to get this is overkill — it forces a build step and a component rewrite of the markup the server already produces. `smartforms` fills that gap: it layers per-field state tracking, validation, and CRUD toolbar wiring onto the static HTML you already render, driven entirely by HTML attributes, with no framework and no build step.
+
 `smartforms` adds dynamic state tracking to plain HTML forms — no framework, no JSX, no template engine. Mark a `<form>` with the `smartform` class and the library will:
 
 - Track per-field state (`new`, `unchanged`, `changed`, `invalid`, `empty`) and apply matching CSS classes for styling.
@@ -135,7 +137,7 @@ fieldset.invalid > select,
 fieldset.invalid > textarea  { border-color: #f4a3a3; background: #fdecec; }
 ```
 
-Note: the *form-level* states (`NORMAL`, `CHANGED`, `MANY`, `REORDERED`, `ILLEGAL`, `DEACTIVATED`, `SUBMITTED`) drive toolbar button enable/disable — see "Toolbar action roles" below. They do not produce CSS classes on the form element.
+Note: the *form-level* states (`NORMAL`, `CHANGED`, `SELECTED`, `MANY`, `ILLEGAL`, `DEACTIVATED`, `SUBMITTED`) drive toolbar button enable/disable — see "Toolbar action roles" below. They do not produce CSS classes on the form element.
 
 ---
 
@@ -211,7 +213,26 @@ Caveats: counter only updates on `keyup`. Pasting via mouse menu, programmatic v
 
 ## Supported inputs
 
-`TextInput`, `NumberInput`, `UrlInput`, `ColorInput`, `DateTimeInput`, `FileInput`, `TextAreaInput`, `CheckBoxInput`, `RadioInput`, `SelectInput`, `DynamicTableInput`.
+`TextInput`, `EmailInput`, `NumberInput`, `UrlInput`, `ColorInput`, `DateTimeInput`, `FileInput`, `TextAreaInput`, `CheckBoxInput`, `RadioInput`, `SelectInput`, `DynamicTableInput`.
+
+Input handlers are resolved from the element's tag and `type`. The mapping is:
+
+| Element / type                          | Handler             |
+| --------------------------------------- | ------------------- |
+| `input[type=text]`, `input[type=password]` | `TextInput`     |
+| `input[type=email]`                     | `EmailInput`        |
+| `input[type=url]`                       | `UrlInput`          |
+| `input[type=number]`                    | `NumberInput`       |
+| `input[type=color]`                     | `ColorInput`        |
+| `input[type=datetime]`, `input.datetimepicker` | `DateTimeInput` |
+| `input[type=file]`                      | `FileInput`         |
+| `input[type=checkbox]`                  | `CheckBoxInput`     |
+| `input[type=radio]`                     | `RadioInput`        |
+| `select`                                | `SelectInput`       |
+| `textarea`                              | `TextAreaInput`     |
+| `table.smartdynamictable`               | `DynamicTableInput` |
+
+`EmailInput` extends `TextInput`, so it accepts the same `data-rule` / `data-limit` / `data-guide` attributes, and additionally flags the fieldset `invalid` when the value is not a valid email address (`^[^\s@]+@[^\s@]+\.[^\s@]+$`). An `<input>` whose `type` has no registered handler is silently skipped.
 
 You can subclass `BaseInput` to add your own.
 
@@ -245,18 +266,21 @@ The toolbar may be placed anywhere inside the form: before or after the `smartfo
 
 Buttons inside `nav.toolbar` are wired by their `data-role`:
 
-`create`, `update`, `updateall`, `delete`, `deleteall`, `toggle`, `cancel`.
+`create`, `edit`, `update`, `updateall`, `delete`, `deleteall`, `destroy`, `toggle`, `back`, `cancel`.
 
 Each role resolves to a default HTTP Task descriptor when clicked. The `data-task` attribute on the button can override the default — see [HTTP Tasks](#http-tasks) below.
 
 | Role                                     | Default task                    | Notes                                    |
 | ---------------------------------------- | ------------------------------- | ---------------------------------------- |
 | `create`                                 | `POST /{resource}`              | New record; often rendered as `<a href>` navigation. |
+| `edit`                                   | `GET /{resource}/{id}/edit`     | Navigate to a record's edit screen.      |
 | `update`                                 | `PUT /{resource}/{id}`          | Single-record update.                    |
 | `updateall`                              | `PUT /{resource}?ids={ids}`     | Bulk update; query-string ID list.       |
 | `delete`                                 | `DELETE /{resource}/{id}`       | Single-record delete.                    |
 | `deleteall`                              | `DELETE /{resource}?ids={ids}`  | Bulk delete; query-string ID list.       |
+| `destroy`                                | `DELETE /{resource}/{id}`       | Delete enabled in `NORMAL` state (e.g. a permanent "delete this record" action). |
 | `toggle`                                 | `PATCH /{resource}/{id}`        | Single-record toggle (async). Enabled in `SELECTED` state only. |
+| `back`                                   | _(special)_                     | Navigation only; like `create`, follows its `<a href>`. No HTTP task. |
 | `cancel`                                 | _(special)_                     | Calls `form.reset()` — no HTTP task.     |
 
 ---
@@ -402,17 +426,19 @@ Practical rule of thumb:
 
 Per-state enable matrix (only applies to buttons that are actually rendered):
 
-| State         | Enabled roles                                          |
-| ------------- | ------------------------------------------------------ |
-| `NORMAL`      | `create`                                               |
-| `CHANGED`     | `update`, `delete`, `cancel`                           |
-| `SELECTED`    | `update`, `delete`, `toggle`, `cancel`                 |
-| `MANY`        | `updateall`, `deleteall`                               |
-| `ILLEGAL`     | `cancel` only                                          |
-| `DEACTIVATED` | none (all disabled)                                    |
-| `SUBMITTED`   | none (all disabled while in flight)                    |
+| State         | Enabled roles                                                       |
+| ------------- | ------------------------------------------------------------------- |
+| `NORMAL`      | `create`, `destroy`, `back`                                         |
+| `CHANGED`     | `edit`, `update`, `updateall`, `delete`, `deleteall`, `cancel`      |
+| `SELECTED`    | `edit`, `update`, `delete`, `toggle`, `cancel`                      |
+| `MANY`        | `updateall`, `deleteall`                                            |
+| `ILLEGAL`     | `cancel` only                                                       |
+| `DEACTIVATED` | none (all disabled)                                                 |
+| `SUBMITTED`   | none (all disabled while in flight)                                 |
 
 Anything not listed is disabled in that state. A `cancel` button on a freshly loaded form is disabled in `NORMAL` because there is nothing to cancel — it lights up the moment any field becomes `CHANGED`. The `toggle` role is special: it is only enabled in `SELECTED` state (when exactly one row is selected in a list form).
+
+The matrix above mirrors `Button.js` exactly. Note that the practical rule still applies: render only the roles a given form actually supports. `updateall` / `deleteall` are enabled in `CHANGED` as well as `MANY`, but you would only ever render them on a list form, where the dirty states are `SELECTED` / `MANY` rather than `CHANGED`.
 
 ---
 
