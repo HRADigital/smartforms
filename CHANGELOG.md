@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- `SmartFormList.resource()` returning the list's `data-resource` attribute, mirroring `SmartForm.resource()` so `TaskExecutor` can read the resource from either form body.
+
+### Fixed
+- Documentation: `README.md` now lists `EmailInput` and the `input[type=password] -> TextInput` mapping, documents the `edit`, `destroy`, and `back` toolbar roles, and corrects the per-state button-enable matrix and the form-level state list to match `Button.js` / `State.js`.
+- `types/index.d.ts` rewritten to match the actual public API (removed the non-existent `reordered` state, `LINK` / `REORDER` roles, and fictional `autoInit` signature; added `EmailInput`, `Tasks`, `TaskExecutor`, and the real method surfaces).
+- `CONTRIBUTING.md` no longer references a non-existent `.nvmrc`.
+
 ## [0.1.1] - 2026-05-04
 
 ### Fixed
