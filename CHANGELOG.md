@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-13
+
 ### Added
+- `TextAreaInput` character limit enforcement (`data-limit`) and an optional live counter guide (`data-guide`) that warns when nearing the limit.
 - `SmartFormList.resource()` returning the list's `data-resource` attribute, mirroring `SmartForm.resource()` so `TaskExecutor` can read the resource from either form body.
 
 ### Fixed
