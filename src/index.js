@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) HRADigital - Hugo Rafael Azevedo.
+ */
+
 import SmartForm from './form/SmartForm.js';
 import SmartFormList from './form/SmartFormList.js';
 import SmartFormRecord from './form/SmartFormRecord.js';
