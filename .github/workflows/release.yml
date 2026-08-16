@@ -29,7 +29,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          # semantic-release 25 requires ^22.14 || >=24.10 - this is the
+          # release runner only; the package itself still supports Node 20.
+          node-version: 22
           cache: npm
           registry-url: https://registry.npmjs.org
       - run: npm ci
