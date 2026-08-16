@@ -1,0 +1,9 @@
+#!/bin/sh
+# Conventional Commits gate at commit time: the release automation derives the
+# version from the commit type, so a malformed message either fails the CI
+# "Commit messages" job or silently skips a release. Same commitlint config as
+# CI, so what passes here passes there.
+# Bypass with: git commit --no-verify
+set -e
+
+npx --no-install commitlint --edit "$1"

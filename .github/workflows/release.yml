@@ -2,17 +2,31 @@ name: Release
 
 on:
   push:
-    tags: ['v*']
+    branches: [master]
+  workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
   id-token: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
-  publish:
+  release:
+    name: Semantic release
     runs-on: ubuntu-latest
+    # The release commit is pushed back by semantic-release itself - never
+    # let it trigger a second run.
+    if: "!contains(github.event.head_commit.message, 'chore(release):')"
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
           node-version: 20
@@ -20,12 +34,17 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm run lint
+      - run: npm run format:check
       - run: npm test
       - run: npm run build
-      - run: npm publish --access public --provenance
+      - name: Verify dist outputs
+        run: |
+          test -f dist/smartforms.mjs
+          test -f dist/smartforms.cjs
+          test -f dist/smartforms.umd.js
+      - name: Release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v3
-        with:
-          generate_release_notes: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: npx semantic-release
