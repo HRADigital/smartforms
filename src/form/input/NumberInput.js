@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright (c) HRADigital - Hugo Rafael Azevedo.
+ */
+
 import BaseInput from './BaseInput.js';
 
 /**
@@ -100,11 +108,47 @@ class NumberInput extends BaseInput {
         }
 
         // Checks the validation for the step.
-        if (this._step !== null && parseFloat(this._value) % parseFloat(this._step) > 0) {
-            return false;
+        return this.validateStep();
+    }
+
+    /**
+     * Validates the NumberBox's value against its step.
+     *
+     * Counts how many steps separate the value from the step base, and requires
+     * that count to be a whole number. A plain `value % step` cannot be used
+     * here: binary floating point cannot hold most decimal steps exactly, so a
+     * legal value leaves a residue of a few units in the last place - 41.7015
+     * against a step of 0.0000001 leaves ~4.8e-15, which reads as a violation.
+     * The same residue also hid the reverse bug, since `%` carries the sign of
+     * the dividend and a negative remainder never compared greater than zero,
+     * so no negative value was ever checked at all.
+     *
+     * @return {boolean}
+     */
+    validateStep() {
+        // A missing step, or the literal "any", places no constraint on the value.
+        const step = parseFloat(this._step);
+        if (this._step === null || !Number.isFinite(step) || step <= 0) {
+            return true;
         }
 
-        return true;
+        // A value that is not a number is not this check's to reject.
+        const value = parseFloat(this._value);
+        if (!Number.isFinite(value)) {
+            return true;
+        }
+
+        // The step is measured from the minimum where one is declared, and from
+        // zero otherwise, as the HTML step base is defined.
+        const min = parseFloat(this._min);
+        const base = Number.isFinite(min) ? min : 0;
+
+        // The residue grows with the magnitude of the count, so the tolerance
+        // has to grow with it too - a fixed epsilon fails on small steps.
+        const steps = (value - base) / step;
+        const tolerance = Math.max(1e-9, Math.abs(steps) * Number.EPSILON * 8);
+
+        return Math.abs(steps - Math.round(steps)) <= tolerance;
     }
 }
 

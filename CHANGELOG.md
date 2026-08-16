@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+- `NumberInput` step validation no longer rejects legal decimal values. `value % step` left a floating point residue for any step binary cannot hold exactly, so a value such as `41.7015` against `step="0.0000001"` was marked invalid; the same residue carried the sign of the value, so negative values were never checked at all. The count of steps from the step base is now compared against a whole number within a magnitude-aware tolerance, and the base is taken from `min` where one is declared, as the HTML step base is defined.
+
 ## [1.1.0] - 2026-07-13
 
 ### Added
