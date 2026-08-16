@@ -20,4 +20,14 @@ describe('ColorInput', () => {
         expect(c.hasChanged()).toBe(true);
         expect(fs.classList.contains('changed')).toBe(true);
     });
+
+    it('marks changed while picking a colour (input event)', () => {
+        const fs = fieldset('<input type="color" name="c" value="#ff0000" />');
+        const c = new ColorInput(fs, State.NORMAL);
+        const input = fs.querySelector('input');
+        input.value = '#0000ff';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(c.hasChanged()).toBe(true);
+        expect(fs.classList.contains('changed')).toBe(true);
+    });
 });

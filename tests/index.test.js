@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as api from '../src/index.js';
 import { html, clearDom } from './_helpers/dom.js';
 
@@ -114,6 +114,37 @@ describe('autoInit', () => {
         expect(tracker.classList.contains('disabled')).toBe(true);
         expect(tracker.getAttribute('aria-disabled')).toBe('true');
         expect(tracker.getAttribute('tabindex')).toBe('-1');
+    });
+});
+
+describe('auto bootstrap', () => {
+    beforeEach(() => clearDom());
+    afterEach(() => {
+        delete document.readyState;
+        vi.resetModules();
+    });
+
+    it('defers the initial run until DOMContentLoaded while the document loads', async () => {
+        Object.defineProperty(document, 'readyState', {
+            configurable: true,
+            get: () => 'loading',
+        });
+
+        const wrapper = html`
+            <form class="smartform" data-resource="widgets">
+                <div class="smartformrecord">
+                    <fieldset><input type="text" name="x" value="hi" /></fieldset>
+                </div>
+            </form>
+        `;
+        const form = wrapper.querySelector('form');
+
+        vi.resetModules();
+        const reloaded = await import('../src/index.js');
+        expect(reloaded.getForm(form)).toBeNull();
+
+        document.dispatchEvent(new Event('DOMContentLoaded'));
+        expect(reloaded.getForm(form)).toBeInstanceOf(reloaded.SmartForm);
     });
 });
 

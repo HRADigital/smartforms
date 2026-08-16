@@ -92,6 +92,35 @@ describe('DynamicTableInput', () => {
         expect(dt._fieldset.classList.contains('changed')).toBe(true);
     });
 
+    it('marks the fieldset invalid when a required table loses every row', () => {
+        const wrapper = html`
+            <div>
+                <fieldset required>
+                    <select name="picker">
+                        <option value="x">x</option>
+                    </select>
+                </fieldset>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><input type="hidden" name="rows[]" value="1" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+        const table = wrapper.querySelector('table');
+        const dt = new DynamicTableInput(table, State.NORMAL);
+        const tbody = table.querySelector('tbody');
+
+        tbody.innerHTML = '';
+        tbody.dispatchEvent(new Event('DOMSubtreeModified'));
+
+        expect(dt.isIllegal()).toBe(true);
+        expect(dt._fieldset.classList.contains('invalid')).toBe(true);
+        expect(dt._fieldset.classList.contains('changed')).toBe(false);
+    });
+
     it('isIllegal when required and empty', () => {
         const empty = html`
             <div>

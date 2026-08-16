@@ -89,4 +89,16 @@ describe('Toolbar', () => {
         cancelAnchor.click();
         expect(events.length).toBe(0);
     });
+
+    it('emits no taskExecuted when the requested role resolves to no Task', () => {
+        const { nav, form } = makeFixture();
+        const t = new Toolbar(nav, form);
+        const events = captureEvent(nav, 'taskExecuted');
+
+        t.onTaskRequest({
+            detail: { role: 'unknown-role', dataTaskAttr: null, button: null },
+        });
+
+        expect(events.length).toBe(0);
+    });
 });

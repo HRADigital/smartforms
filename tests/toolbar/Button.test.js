@@ -55,6 +55,13 @@ describe('Button', () => {
         }
     });
 
+    it('MANY state: any other role → disabled but visible', () => {
+        const el = makeBtn(Roles.CREATE);
+        new Button(el).setState(State.MANY);
+        expect(el.hasAttribute('disabled')).toBe(true);
+        expect(el.classList.contains('hidden')).toBe(false);
+    });
+
     it('ILLEGAL state: only CANCEL stays enabled', () => {
         const cancelEl = makeBtn(Roles.CANCEL);
         const updateEl = makeBtn(Roles.UPDATE);

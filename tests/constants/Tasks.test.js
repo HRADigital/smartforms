@@ -109,6 +109,17 @@ describe('Tasks.resolve', () => {
         expect(Tasks.resolve(Roles.CANCEL, '')).toBeNull();
         expect(Tasks.resolve(Roles.BACK, null)).toBeNull();
     });
+
+    it('returns null for an unmapped role', () => {
+        expect(Tasks.resolve('unknown-role', '')).toBeNull();
+    });
+});
+
+describe('Tasks.roleMap', () => {
+    it('exposes the current role to task mapping', () => {
+        expect(Tasks.roleMap[Roles.UPDATE]).toBe('put:/{resource}/{id}');
+        expect(Tasks.roleMap[Roles.CANCEL]).toBeNull();
+    });
 });
 
 describe('Tasks.configure', () => {
