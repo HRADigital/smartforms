@@ -33,7 +33,10 @@ jobs:
           # release runner only; the package itself still supports Node 20.
           node-version: 22
           cache: npm
-          registry-url: https://registry.npmjs.org
+          # No registry-url on purpose: it makes setup-node write an .npmrc
+          # holding the literal "XXXXX-XXXXX-XXXXX-XXXXX" placeholder and point
+          # NPM_CONFIG_USERCONFIG at it, which overrides NPM_TOKEN and fails
+          # authentication. semantic-release writes its own .npmrc instead.
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
