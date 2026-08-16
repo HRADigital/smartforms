@@ -11,7 +11,7 @@
     "client-side",
     "no-framework"
   ],
-  "license": "GPL-2.0-or-later",
+  "license": "MPL-2.0",
   "author": "HraDigital",
   "homepage": "https://github.com/HraDigital/smartforms#readme",
   "repository": {
@@ -39,6 +39,7 @@
     "dist",
     "src",
     "LICENSE",
+    "TRADEMARK.md",
     "README.md",
     "CHANGELOG.md"
   ],

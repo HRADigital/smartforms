@@ -1,7 +1,7 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
 import terser      from '@rollup/plugin-terser';
 
-const banner = `/*! @hradigital/smartforms | GPL-2.0-or-later */`;
+const banner = `/*! @hradigital/smartforms | MPL-2.0 */`;
 
 export default {
     input: 'src/index.js',
