@@ -33,7 +33,7 @@
     [
       "@semantic-release/npm",
       {
-        "npmPublish": true
+        "npmPublish": false
       }
     ],
     [
@@ -46,9 +46,8 @@
     [
       "@semantic-release/github",
       {
-        "failTitle": false,
-        "failComment": false,
-        "successComment": false
+        "failCommentCondition": false,
+        "successCommentCondition": false
       }
     ]
   ]
