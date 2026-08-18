@@ -1,0 +1,5 @@
+# Every change to this repository requires review from the owner.
+# Paired with the "Require review from Code Owners" rule on the master
+# ruleset, this is what makes approval specifically HRADigital's rather
+# than any collaborator's.
+* @HRADigital
