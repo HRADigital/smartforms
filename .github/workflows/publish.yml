@@ -19,5 +19,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm install -g npm@latest # OIDC requires npm >= 11.5.1
       - run: npm ci
+      # semantic-release no longer commits the bump back to master, so the
+      # checked-out package.json still carries the previous version. The tag
+      # is the source of truth, and tagFormat is a bare ${version}, so the tag
+      # name is the version verbatim.
+      - run: npm version "${{ github.event.release.tag_name }}" --no-git-tag-version --allow-same-version
       - run: npm run build
       - run: npm publish

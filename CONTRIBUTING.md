@@ -32,7 +32,8 @@ docs: expand toolbar role table
 - One concern per PR.
 - Add or update tests for any behavior change.
 - Run `npm run lint`, `npm run format:check`, and `npm test` before pushing.
-- Update `CHANGELOG.md` under `## [Unreleased]`.
+- Write Conventional Commit messages. They are the changelog: the release
+  notes are generated from them, so describe the change in the commit body.
 
 ## Code style
 
@@ -42,7 +43,13 @@ docs: expand toolbar role table
 
 ## Releasing (maintainers only)
 
-1. Bump `version` in `package.json`.
-2. Move `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD` in `CHANGELOG.md`.
-3. Tag: `git tag vX.Y.Z && git push --tags`.
-4. The `release.yml` workflow builds and publishes to npm.
+Nothing is done by hand. Never bump `version` in `package.json` - it is not
+the source of truth and semantic-release ignores it.
+
+1. Merge a releasable commit to `master` (`feat`, `fix`, `perf`, `refactor`
+   or `revert`; the other types cut no release).
+2. `release.yml` runs semantic-release, which derives the next version from
+   the tag history, tags it, and cuts a GitHub Release whose notes are
+   generated from the commit messages.
+3. That Release triggers `publish.yml`, which publishes to npm over OIDC
+   trusted publishing, with provenance. No tokens are involved.
