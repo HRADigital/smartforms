@@ -10,19 +10,34 @@
           { "type": "refactor", "release": "patch" },
           { "type": "revert", "release": "patch" },
           { "type": "perf", "release": "patch" },
-          { "type": "test", "release": false },
-          { "type": "docs", "release": false },
-          { "type": "chore", "release": false },
-          { "type": "build", "release": false },
-          { "type": "ci", "release": false },
-          { "type": "style", "release": false }
+          { "type": "test", "release": "patch" },
+          { "type": "docs", "release": "patch" },
+          { "type": "chore", "release": "patch" },
+          { "type": "build", "release": "patch" },
+          { "type": "ci", "release": "patch" },
+          { "type": "style", "release": "patch" }
         ]
       }
     ],
     [
       "@semantic-release/release-notes-generator",
       {
-        "preset": "conventionalcommits"
+        "preset": "conventionalcommits",
+        "presetConfig": {
+          "types": [
+            { "type": "feat", "section": "Features" },
+            { "type": "fix", "section": "Bug Fixes" },
+            { "type": "perf", "section": "Performance" },
+            { "type": "refactor", "section": "Refactoring" },
+            { "type": "revert", "section": "Reverts" },
+            { "type": "docs", "section": "Documentation" },
+            { "type": "build", "section": "Build" },
+            { "type": "style", "section": "Styling" },
+            { "type": "test", "section": "Tests" },
+            { "type": "ci", "section": "Continuous Integration" },
+            { "type": "chore", "section": "Chores" }
+          ]
+        }
       }
     ],
     [
