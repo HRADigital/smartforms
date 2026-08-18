@@ -32,6 +32,16 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
     steps:
+      # A GitHub App token, not the default GITHUB_TOKEN, for two reasons:
+      # the master ruleset requires a pull request, and only an actor on the
+      # bypass list may push the release commit directly; and events raised by
+      # GITHUB_TOKEN never start another workflow, so a release it created
+      # would silently fail to trigger publish.yml.
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
       - uses: actions/checkout@v7
         with:
           # The exact commit CI validated, not whatever master points at now.
@@ -44,11 +54,6 @@ jobs:
           # release runner only; the package itself still supports Node 20.
           node-version: 22
           cache: npm
-          # The .npmrc written here holds a placeholder that is only resolved
-          # from NODE_AUTH_TOKEN, so every npm command that needs the registry
-          # must set it. semantic-release no longer publishes, so it never
-          # reads this file.
-          registry-url: https://registry.npmjs.org
       - run: npm ci
       # Built here rather than left to prepublishOnly, so a broken build fails
       # before semantic-release tags and commits anything.
@@ -59,28 +64,10 @@ jobs:
           test -f dist/smartforms.cjs
           test -f dist/smartforms.umd.js
       # Versions, writes the CHANGELOG, tags, and cuts the GitHub release. The
-      # npm registry is not involved, so nothing here depends on NPM_TOKEN.
+      # npm registry is not involved here - publishing is handled by
+      # publish.yml, which triggers on the release this step creates and
+      # authenticates to npm over OIDC trusted publishing.
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: npx semantic-release
-
-      # Publishing is a separate, non blocking step on purpose: a rejected npm
-      # token, an unclaimed scope or a registry outage must not undo or hold
-      # back a release that is already tagged and announced on GitHub. The next
-      # release retries the publish, or it can be done by hand from the tag.
-      - name: Publish to npm
-        continue-on-error: true
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-        run: |
-          version=$(node -p "require('./package.json').version")
-          name=$(node -p "require('./package.json').name")
-          # semantic-release leaves the version untouched when it releases
-          # nothing, so this is also the "no new release" exit.
-          if npm view "$name@$version" version > /dev/null 2>&1; then
-            echo "$name@$version is already on the registry - nothing to publish."
-            exit 0
-          fi
-          npm publish --access public --provenance
