@@ -1,0 +1,23 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write # required for OIDC - without this, publish fails with ENEEDAUTH
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install -g npm@latest # OIDC requires npm >= 11.5.1
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish
