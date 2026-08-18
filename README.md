@@ -2,10 +2,12 @@
 
 > State-aware client-side form manager for static HTML forms.
 
-[![CI](https://github.com/HraDigital/smartforms/actions/workflows/ci.yml/badge.svg)](https://github.com/HraDigital/smartforms/actions/workflows/ci.yml)
+[![CI](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml/badge.svg)](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/@hradigital/smartforms.svg)](https://www.npmjs.com/package/@hradigital/smartforms)
+[![downloads](https://img.shields.io/npm/dm/@hradigital/smartforms.svg)](https://www.npmjs.com/package/@hradigital/smartforms)
+[![node](https://img.shields.io/node/v/@hradigital/smartforms.svg)](https://www.npmjs.com/package/@hradigital/smartforms)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@hradigital/smartforms)](https://bundlephobia.com/package/@hradigital/smartforms)
-[![license](https://img.shields.io/npm/l/@hradigital/smartforms.svg)](./LICENSE)
+[![license](https://img.shields.io/github/license/HRADigital/smartforms.svg)](./LICENSE)
 
 Server-rendered apps still ship plain HTML forms, but users expect client-side behaviour: fields that visibly react the moment their value changes, Save / Delete buttons that enable only when there is actually something to save or delete, inline validation feedback, and toolbar actions wired to the right HTTP verb and endpoint. Reaching for React or Vue just to get this is overkill — it forces a build step and a component rewrite of the markup the server already produces. `smartforms` fills that gap: it layers per-field state tracking, validation, and CRUD toolbar wiring onto the static HTML you already render, driven entirely by HTML attributes, with no framework and no build step.
 
