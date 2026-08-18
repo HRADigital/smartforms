@@ -1,6 +1,6 @@
 {
   "name": "@hradigital/smartforms",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "State-aware client-side form manager for static HTML forms. Tracks per-field state (new, unchanged, changed, invalid, empty) and toggles toolbar actions accordingly.",
   "keywords": [
     "form",
@@ -13,13 +13,13 @@
   ],
   "license": "MPL-2.0",
   "author": "HraDigital",
-  "homepage": "https://github.com/HraDigital/smartforms#readme",
+  "homepage": "https://github.com/HRADigital/smartforms#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HraDigital/smartforms.git"
+    "url": "git+https://github.com/HRADigital/smartforms.git"
   },
   "bugs": {
-    "url": "https://github.com/HraDigital/smartforms/issues"
+    "url": "https://github.com/HRADigital/smartforms/issues"
   },
   "type": "module",
   "main": "./dist/smartforms.cjs",
