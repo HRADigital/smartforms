@@ -6,7 +6,6 @@
 [![License](https://img.shields.io/github/license/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/v/release/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/releases)
 [![CI](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@hradigital/smartforms?label=minzipped)](https://bundlephobia.com/package/@hradigital/smartforms)
 [![Types](https://img.shields.io/badge/Types-TypeScript-3178C6?logo=typescript&logoColor=white)](types/index.d.ts)
 [![Tests](https://img.shields.io/badge/Tests-Vitest-6E9F18?logo=vitest&logoColor=white)](vitest.config.js)
 [![Linter](https://img.shields.io/badge/Linter-ESLint-4B32C3?logo=eslint&logoColor=white)](eslint.config.js)
