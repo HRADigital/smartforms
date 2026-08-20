@@ -1,7 +1,5 @@
 # @hradigital/smartforms
 
-> State-aware client-side form manager for static HTML forms.
-
 [![CI](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml/badge.svg)](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/@hradigital/smartforms.svg)](https://www.npmjs.com/package/@hradigital/smartforms)
 [![downloads](https://img.shields.io/npm/dm/@hradigital/smartforms.svg)](https://www.npmjs.com/package/@hradigital/smartforms)
@@ -9,16 +7,26 @@
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@hradigital/smartforms)](https://bundlephobia.com/package/@hradigital/smartforms)
 [![license](https://img.shields.io/github/license/HRADigital/smartforms.svg)](./LICENSE)
 
-Server-rendered apps still ship plain HTML forms, but users expect client-side behaviour: fields that visibly react the moment their value changes, Save / Delete buttons that enable only when there is actually something to save or delete, inline validation feedback, and toolbar actions wired to the right HTTP verb and endpoint. Reaching for React or Vue just to get this is overkill — it forces a build step and a component rewrite of the markup the server already produces. `smartforms` fills that gap: it layers per-field state tracking, validation, and CRUD toolbar wiring onto the static HTML you already render, driven entirely by HTML attributes, with no framework and no build step.
+State-aware client-side form manager for static HTML forms.
 
-`smartforms` adds dynamic state tracking to plain HTML forms — no framework, no JSX, no template engine. Mark a `<form>` with the `smartform` class and the library will:
+Server-rendered apps ship plain HTML forms, but users expect fields that react as they
+change, Save and Delete buttons that enable only when there is something to save or delete,
+and toolbar actions wired to the right HTTP verb. Reaching for React or Vue to get that costs
+a build step and a rewrite of markup the server already produces.
 
-- Track per-field state (`new`, `unchanged`, `changed`, `invalid`, `empty`) and apply matching CSS classes for styling.
-- Manage two form layouts out of the box: a **list of records** (`smartformlist`) or a **single record** (`smartformrecord`).
-- Enable / disable toolbar buttons (create, update, delete, cancel, ...) based on the form's overall state.
-- Emit `formStateChange` `CustomEvent`s you can hook into.
+`smartforms` layers that behaviour onto the HTML you already render, driven entirely by
+attributes. Mark a `<form>` with the `smartform` class and it takes over.
 
----
+- **Per-field state** - tracks `new`, `unchanged`, `changed`, `invalid` and `empty`, applying a
+  matching CSS class for styling.
+- **Two layouts** - a list of records (`smartformlist`) or a single record (`smartformrecord`).
+- **Toolbar wiring** - enables and disables create, update, delete and cancel buttons from the
+  form's overall state.
+- **HTTP Tasks** - binds a toolbar action to a verb and endpoint, declared in markup.
+- **`formStateChange` events** - a `CustomEvent` per state transition, for anything the library
+  does not cover.
+- **No framework, no build step** - ESM, CJS and a UMD build loadable straight from a `<script>`
+  tag.
 
 ## Installation
 
@@ -38,8 +46,6 @@ Or load the UMD build directly in the browser:
     SmartForms.autoInit();
 </script>
 ```
-
----
 
 ## Quick start — single record
 
@@ -65,8 +71,6 @@ autoInit(); // scans for forms and toolbars
 ```
 
 When a user edits a field, `smartforms` flips the field state to `CHANGED`, the form's overall state follows, and the `update` / `cancel` buttons enable themselves automatically. Clicking `update` executes `PUT /users/7` (the default task for the `update` role, with the form's resource and ID auto-inserted). Click `cancel` to reset the form.
-
----
 
 ## Quick start — list of records
 
@@ -101,8 +105,6 @@ import { autoInit } from '@hradigital/smartforms';
 autoInit(); // scans for forms and toolbars
 ```
 
----
-
 ## Auto-init
 
 If you have one form per page and want zero glue code:
@@ -112,8 +114,6 @@ import { autoInit } from '@hradigital/smartforms';
 
 autoInit(); // scans for `form.smartform` and `nav.toolbar`
 ```
-
----
 
 ## Field states (CSS hooks)
 
@@ -140,8 +140,6 @@ fieldset.invalid > textarea  { border-color: #f4a3a3; background: #fdecec; }
 ```
 
 Note: the *form-level* states (`NORMAL`, `CHANGED`, `SELECTED`, `MANY`, `ILLEGAL`, `DEACTIVATED`, `SUBMITTED`) drive toolbar button enable/disable — see "Toolbar action roles" below. They do not produce CSS classes on the form element.
-
----
 
 ## Configuring an input
 
@@ -211,8 +209,6 @@ fieldset > .smartguide.warning  { color: #c00; font-weight: 600; }
 
 Caveats: counter only updates on `keyup`. Pasting via mouse menu, programmatic value changes, and `form.reset()` don't re-render the counter until the next keystroke.
 
----
-
 ## Supported inputs
 
 `TextInput`, `EmailInput`, `NumberInput`, `UrlInput`, `ColorInput`, `DateTimeInput`, `FileInput`, `TextAreaInput`, `CheckBoxInput`, `RadioInput`, `SelectInput`, `DynamicTableInput`.
@@ -238,8 +234,6 @@ Input handlers are resolved from the element's tag and `type`. The mapping is:
 
 You can subclass `BaseInput` to add your own.
 
----
-
 ## Toolbar placement rule
 
 **The `nav.toolbar` must be a descendant of the same `<form>` element it controls.** Placing the toolbar outside the form breaks two things:
@@ -262,8 +256,6 @@ The toolbar may be placed anywhere inside the form: before or after the `smartfo
 </form>
 ```
 
----
-
 ## Toolbar action roles
 
 Buttons inside `nav.toolbar` are wired by their `data-role`:
@@ -284,8 +276,6 @@ Each role resolves to a default HTTP Task descriptor when clicked. The `data-tas
 | `toggle`                                 | `PATCH /{resource}/{id}`        | Single-record toggle (async). Enabled in `SELECTED` state only. |
 | `back`                                   | _(special)_                     | Navigation only; like `create`, follows its `<a href>`. No HTTP task. |
 | `cancel`                                 | _(special)_                     | Calls `form.reset()` — no HTTP task.     |
-
----
 
 ## HTTP Tasks
 
@@ -442,8 +432,6 @@ Anything not listed is disabled in that state. A `cancel` button on a freshly lo
 
 The matrix above mirrors `Button.js` exactly. Note that the practical rule still applies: render only the roles a given form actually supports. `updateall` / `deleteall` are enabled in `CHANGED` as well as `MANY`, but you would only ever render them on a list form, where the dirty states are `SELECTED` / `MANY` rather than `CHANGED`.
 
----
-
 ## Listening to state changes
 
 ```js
@@ -452,13 +440,9 @@ form.addEventListener('formStateChange', (e) => {
 });
 ```
 
----
-
 ## Browser support
 
 Evergreen browsers + ES2017+. No IE.
-
----
 
 ## Contributing
 
