@@ -1,26 +1,28 @@
 # @hradigital/smartforms
 
-[![Latest Stable Version](https://img.shields.io/npm/v/@hradigital/smartforms?logo=npm&logoColor=white)](https://www.npmjs.com/package/@hradigital/smartforms)
-[![Total Downloads](https://img.shields.io/npm/dm/@hradigital/smartforms)](https://www.npmjs.com/package/@hradigital/smartforms)
-[![Node Version Require](https://img.shields.io/node/v/@hradigital/smartforms?logo=nodedotjs&logoColor=white)](https://www.npmjs.com/package/@hradigital/smartforms)
-[![License](https://img.shields.io/github/license/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/blob/master/LICENSE)
-[![Release](https://img.shields.io/github/v/release/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/releases)
 [![CI](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/HRADigital/smartforms/actions/workflows/ci.yml)
+[![Release](https://github.com/HRADigital/smartforms/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/HRADigital/smartforms/actions/workflows/release.yml)
+[![Publish to npm](https://github.com/HRADigital/smartforms/actions/workflows/publish.yml/badge.svg)](https://github.com/HRADigital/smartforms/actions/workflows/publish.yml)
+[![Release](https://img.shields.io/github/v/release/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/releases)
+[![Latest Version on npm](https://img.shields.io/npm/v/@hradigital/smartforms?logo=npm&logoColor=white)](https://www.npmjs.com/package/@hradigital/smartforms)
+[![Total Downloads](https://img.shields.io/npm/dm/@hradigital/smartforms)](https://www.npmjs.com/package/@hradigital/smartforms)
+[![Node Version](https://img.shields.io/node/v/@hradigital/smartforms?logo=nodedotjs&logoColor=white)](https://www.npmjs.com/package/@hradigital/smartforms)
+[![License](https://img.shields.io/github/license/HRADigital/smartforms)](LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/commits/master)
+[![Open Issues](https://img.shields.io/github/issues/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/issues)
+[![Contributors](https://img.shields.io/github/contributors/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/HRADigital/smartforms)](https://github.com/HRADigital/smartforms/stargazers)
+[![Code Size](https://img.shields.io/github/languages/code-size/HRADigital/smartforms)](https://github.com/HRADigital/smartforms)
 [![Types](https://img.shields.io/badge/Types-TypeScript-3178C6?logo=typescript&logoColor=white)](types/index.d.ts)
 [![Tests](https://img.shields.io/badge/Tests-Vitest-6E9F18?logo=vitest&logoColor=white)](vitest.config.js)
 [![Linter](https://img.shields.io/badge/Linter-ESLint-4B32C3?logo=eslint&logoColor=white)](eslint.config.js)
 [![Code Style](https://img.shields.io/badge/code%20style-Prettier-F7B93E?logo=prettier&logoColor=white)](.prettierrc.json)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
-State-aware client-side form manager for static HTML forms.
-
-Server-rendered apps ship plain HTML forms, but users expect fields that react as they
-change, Save and Delete buttons that enable only when there is something to save or delete,
-and toolbar actions wired to the right HTTP verb. Reaching for React or Vue to get that costs
-a build step and a rewrite of markup the server already produces.
-
-`smartforms` layers that behaviour onto the HTML you already render, driven entirely by
-attributes. Mark a `<form>` with the `smartform` class and it takes over.
+State-aware client-side form manager for static HTML forms. It layers reactive behaviour onto the
+HTML a server-rendered app already produces, driven entirely by attributes - mark a `<form>` with
+the `smartform` class and it takes over. Fields, toolbar buttons and HTTP actions then follow the
+form's state, with no React or Vue and no rewrite of the markup the server already sends.
 
 - **Per-field state** - tracks `new`, `unchanged`, `changed`, `invalid` and `empty`, applying a
   matching CSS class for styling.
