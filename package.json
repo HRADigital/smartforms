@@ -72,7 +72,7 @@
     "@vitest/coverage-v8": "^4.1.0",
     "conventional-changelog-conventionalcommits": "^10.3.0",
     "eslint": "^10.0.0",
-    "happy-dom": "^20.0.0",
+    "happy-dom": "^21.0.3",
     "prettier": "^3.2.0",
     "rollup": "^4.13.0",
     "semantic-release": "^25.0.9",
