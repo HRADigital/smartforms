@@ -27,7 +27,7 @@ class NumberInput extends BaseInput {
         // Sets the initial state.
         this._input = fieldset.querySelector('input');
         this._name = this._input.getAttribute('name');
-        this._value = this._input.getAttribute('value');
+        this._value = this._input.getAttribute('value') ?? '';
         this._max = this._input.getAttribute('max');
         this._min = this._input.getAttribute('min');
         this._step = this._input.getAttribute('step');

@@ -28,7 +28,7 @@ class TextInput extends BaseInput {
         this._input = fieldset.querySelector('input');
         this._name = this._input.getAttribute('name');
         this._rule = this._input.getAttribute('data-rule');
-        this._value = this._input.getAttribute('value');
+        this._value = this._input.getAttribute('value') ?? '';
         this._limit = this._input.getAttribute('data-limit');
         const showGuide = this._input.getAttribute('data-guide');
         this._guide = null;

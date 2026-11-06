@@ -27,7 +27,7 @@ class DateTimeInput extends TextInput {
         // Sets the initial state.
         this._input = fieldset.querySelector('input');
         this._name = this._input.getAttribute('name');
-        this._value = this._input.getAttribute('value');
+        this._value = this._input.getAttribute('value') ?? '';
         this._initial = this._value;
         this._guide = null;
 
