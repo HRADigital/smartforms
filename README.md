@@ -356,6 +356,17 @@ If a PUT/PATCH/DELETE endpoint does not include `{id}` and a form `<input name="
 
 A `sync` request either navigates (GET) or submits the form via POST with method spoofing. An `async` request uses `fetch` with optional CSRF headers and dispatches response events.
 
+A role's default verb applies even when the form's own `method` is different. An `update` button with no `data-task` always sends `_method=PUT`. On a form that posts to a POST-only route (for example a sign-in form), set `data-task="post"`:
+
+```html
+<form class="smartform" action="/login" method="post">
+    <!-- fields -->
+    <nav class="toolbar">
+        <button type="submit" data-role="update" data-task="post">Sign in</button>
+    </nav>
+</form>
+```
+
 ### Sync vs. async
 
 **Sync (form submission):**
