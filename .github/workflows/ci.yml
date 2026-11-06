@@ -34,9 +34,12 @@ jobs:
         env:
           BEFORE: ${{ github.event.before }}
         run: |
-          # A branch's first push reports an all-zero "before" sha - nothing to
-          # compare against, so only the tip commit is checked.
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+          # A branch's first push reports an all-zero "before" sha, and a force
+          # push reports a "before" sha that is no longer in the history - in
+          # both cases there is nothing to compare against, so only the tip
+          # commit is checked.
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] \
+            || ! git merge-base --is-ancestor "$BEFORE" "${{ github.sha }}" 2>/dev/null; then
             npx commitlint --last --verbose
           else
             npx commitlint --from "$BEFORE" --to "${{ github.sha }}" --verbose
